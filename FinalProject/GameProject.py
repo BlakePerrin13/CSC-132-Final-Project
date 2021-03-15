@@ -2,6 +2,7 @@
 
 # import pygame and image files
 import pygame as pyg
+import random
 import imgs
 
 
@@ -32,7 +33,7 @@ def display_img(img, x, y):
     gameDisplay.blit(img, (x, y))
 
 
-# defines setup function to be run at start of loop
+# defines setup function to be run at start of loop (might move setup to its own module and import it)
 def setup():
     gameDisplay.fill(green)
     display_img(imgs.AC, card1_x, card1_y)
@@ -51,8 +52,22 @@ while not end:
         if event.type == pyg.QUIT:
             end = True
 
+        # detect if mouse button is pressed on buttons
+        if event.type == pyg.MOUSEBUTTONDOWN:
+            if (display_width * 0.9) <= mouse[0] <= ((display_width * 0.9) + 70) and (display_height * 0.87) <= mouse[1] <= ((display_height * 0.87) + 70):
+                print("You pressed \'deal\'!")
+            if (display_width * 0.01) <= mouse[0] <= ((display_width * 0.01) + 77) and (display_height * 0.86) <= mouse[1] <= ((display_height * 0.86) + 77):
+                print("You pressed \'hit\'!")
+            if (display_width * 0.12) <= mouse[0] <= ((display_width * 0.12) + 77) and (display_height * 0.86) <= mouse[1] <= ((display_height * 0.86) + 77):
+                print("You pressed \'stand\'!")
+
+    # call our setup function
     setup()
 
+    # get mouse x and y coordinates
+    mouse = pyg.mouse.get_pos()
+
+    # update display
     pyg.display.update()
     clock.tick(60)
 
