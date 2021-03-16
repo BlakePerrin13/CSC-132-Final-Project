@@ -41,7 +41,6 @@ def setup():
     display_img(imgs.hit, display_width * 0.01, display_height * 0.86)
     display_img(imgs.stand, display_width * 0.12, display_height * 0.86)
 
-
 # set x and y for first card dealt
 card1_x = (display_width * 0.35)
 card1_y = (display_height * 0.56)
