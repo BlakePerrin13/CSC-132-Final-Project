@@ -5,6 +5,7 @@ import pygame as pyg
 # cards
 AC = pyg.transform.rotozoom(pyg.image.load('./card_images/AC.png'), 0, 0.2)
 AD = pyg.transform.rotozoom(pyg.image.load('./card_images/AD.png'), 0, 0.2)
+# TODO: cards need to be added
 
 # buttons
 deal = pyg.transform.rotozoom(pyg.image.load('./card_images/deal.png'), 0, 1)
