@@ -20,6 +20,10 @@ pyg.display.set_caption('Blackjack')
 
 # set color values
 green = (34, 99, 43)
+white = (255, 255, 255)
+
+# set font for pygame
+font = pyg.font.Font('freesansbold.ttf', 32)
 
 # initiates clock and end parameter
 clock = pyg.time.Clock()
@@ -40,11 +44,31 @@ card1_y = (display_height * 0.56)
 
 # create list for used cards
 used_cards = []
+cards_dealt = 0
 
 
 # randomly gen cards but do not repeat cards
 def random_card():
     return choice([i for i in range(0, 51) if i not in used_cards])
+
+
+# use card name to determine value (removes last character and returns number, prints 10 if face card or 1 if Ace)
+def card_value(name):
+    simplified = name[:-1]
+    if simplified in ["K", "Q", "J"]:
+        return 10
+    elif simplified == "A":
+        return 1
+    else:
+        return int(simplified)
+
+
+# determine total point value of cards
+def score():
+    total = 0
+    for card in objs_cards:
+        total += card.val
+    return gameDisplay.blit(font.render('Score: {}'.format(total), True, white), (20, 20))
 
 
 # initialize objects
@@ -55,7 +79,7 @@ objs = [
 ]
 rand_index = random_card()
 objs_cards = [
-    obj.Card(card1_x, card1_y, imgs.card_names[rand_index], 1, rand_index)
+    obj.Card(card1_x, card1_y, imgs.card_names[rand_index], card_value(imgs.card_names[rand_index]), rand_index)
 ]
 
 
@@ -74,6 +98,7 @@ def setup():
         drawObjs(obj)
     for card in objs_cards:
         drawObjs(card)
+    score()
 
 
 # begin main game loop
@@ -90,7 +115,8 @@ while not end:
             # hit button, generates new card and adds to card objects list
             if (display_width * 0.01) <= mouse[0] <= ((display_width * 0.01) + 77) and (display_height * 0.86) <= mouse[1] <= ((display_height * 0.86) + 77):
                 rand_index = random_card()
-                objs.append(obj.Card((objs_cards[0].x + 40), (objs_cards[0].y - 40), imgs.card_names[rand_index], 1, rand_index))
+                objs_cards.append(obj.Card((objs_cards[cards_dealt].x + 40), (objs_cards[cards_dealt].y - 30), imgs.card_names[rand_index], card_value(imgs.card_names[rand_index]), rand_index))
+                cards_dealt += 1
             # stand button
             if (display_width * 0.12) <= mouse[0] <= ((display_width * 0.12) + 77) and (display_height * 0.86) <= mouse[1] <= ((display_height * 0.86) + 77):
                 print("You pressed \'stand\'!")
