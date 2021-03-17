@@ -27,7 +27,7 @@ font = pyg.font.Font('freesansbold.ttf', 32)
 
 # initiates clock and end parameter
 clock = pyg.time.Clock()
-end = False
+END = False
 
 # how much the cards should be offset in x and y directions when new card is dealt
 card_offset = 40
@@ -38,13 +38,19 @@ def display_img(img, x, y):
     gameDisplay.blit(img, (x, y))
 
 
-# set x and y for first card dealt
+# set x and y for first card dealt to player
 card1_x = (display_width * 0.35)
 card1_y = (display_height * 0.56)
 
-# create list for used cards
+# set x and y for first card dealt to dealer
+card2_x = (display_width * 0.35)
+card2_y = (display_height * 0.1)
+
+# create list for used cards and counters for cards dealt to player/dealer
 used_cards = []
-cards_dealt = 0
+cards_dealt_player = 0
+cards_dealt_dealer = 0
+# FIXME: USED CARDS LIST ISN'T EVEN BEING USED WHAT THE CRAP
 
 
 # randomly gen cards but do not repeat cards
@@ -65,10 +71,10 @@ def card_value(name):
 
 # determine total point value of cards
 def score():
-    total = 0
-    for card in objs_cards:
-        total += card.val
-    return gameDisplay.blit(font.render('Score: {}'.format(total), True, white), (20, 20))
+    total_player = 0
+    for card in objs_cards_player:
+        total_player += card.val
+    return gameDisplay.blit(font.render('Player Total: {}'.format(total_player), True, white), (20, 20))
 
 
 # initialize objects
@@ -77,9 +83,17 @@ objs = [
     obj.Button(display_width * 0.01, display_height * 0.86, 'hit'),
     obj.Button(display_width * 0.12, display_height * 0.86, 'stand')
 ]
+
+
+# for player and dealer: gen random first card and initialize it
 rand_index = random_card()
-objs_cards = [
+objs_cards_player = [
     obj.Card(card1_x, card1_y, imgs.card_names[rand_index], card_value(imgs.card_names[rand_index]), rand_index)
+]
+
+rand_index = random_card()
+objs_cards_dealer = [
+    obj.Card(card2_x, card2_y, imgs.card_names[rand_index], card_value(imgs.card_names[rand_index]), rand_index)
 ]
 
 
@@ -91,45 +105,63 @@ def drawObjs(object):
         gameDisplay.blit(getattr(imgs, object.name), (object.x, object.y))
 
 
-# defines setup function to be run at start of loop (might move setup to its own module and import it)
+# defines setup function to be run at start of loop
 def setup():
     gameDisplay.fill(green)
     for obj in objs:
         drawObjs(obj)
-    for card in objs_cards:
+    for card in objs_cards_player:
+        drawObjs(card)
+    for card in objs_cards_dealer:
         drawObjs(card)
     score()
 
 
+# define reset function
+def reset():
+    global objs_cards_dealer
+    global objs_cards_player
+    global used_cards
+    objs_cards_dealer = []
+    objs_cards_player = []
+    used_cards = []
+    # TODO: MAKE DEAL CARD FUNCTION WITH "PERSON" PARAMETER -- takes list and deals card to it (simple right?)
+
+
 # begin main game loop
-while not end:
-    for event in pyg.event.get():
-        if event.type == pyg.QUIT:
-            end = True
+def main(cards_dealt_player):
+    global END
+    while not END:
+        for event in pyg.event.get():
+            if event.type == pyg.QUIT:
+                END = True
 
-        # detect if mouse button is pressed on buttons (and call appropriate functions)
-        if event.type == pyg.MOUSEBUTTONDOWN:
-            # deal button
-            if (display_width * 0.9) <= mouse[0] <= ((display_width * 0.9) + 70) and (display_height * 0.87) <= mouse[1] <= ((display_height * 0.87) + 70):
-                print("You pressed \'deal\'!")
-            # hit button, generates new card and adds to card objects list
-            if (display_width * 0.01) <= mouse[0] <= ((display_width * 0.01) + 77) and (display_height * 0.86) <= mouse[1] <= ((display_height * 0.86) + 77):
-                rand_index = random_card()
-                objs_cards.append(obj.Card((objs_cards[cards_dealt].x + 40), (objs_cards[cards_dealt].y - 30), imgs.card_names[rand_index], card_value(imgs.card_names[rand_index]), rand_index))
-                cards_dealt += 1
-            # stand button
-            if (display_width * 0.12) <= mouse[0] <= ((display_width * 0.12) + 77) and (display_height * 0.86) <= mouse[1] <= ((display_height * 0.86) + 77):
-                print("You pressed \'stand\'!")
+            # detect if mouse button is pressed on buttons (and call appropriate functions)
+            if event.type == pyg.MOUSEBUTTONDOWN:
+                # deal button
+                if (display_width * 0.9) <= mouse[0] <= ((display_width * 0.9) + 70) and (display_height * 0.87) <= mouse[1] <= ((display_height * 0.87) + 70):
+                    print("You pressed \'deal\'!")
+                    reset()
+                # hit button, generates new card and adds to card objects list
+                if (display_width * 0.01) <= mouse[0] <= ((display_width * 0.01) + 77) and (display_height * 0.86) <= mouse[1] <= ((display_height * 0.86) + 77):
+                    rand_index = random_card()
+                    objs_cards_player.append(obj.Card((objs_cards_player[cards_dealt_player].x + 40), (objs_cards_player[cards_dealt_player].y - 20), imgs.card_names[rand_index], card_value(imgs.card_names[rand_index]), rand_index))
+                    cards_dealt_player += 1
+                # stand button
+                if (display_width * 0.12) <= mouse[0] <= ((display_width * 0.12) + 77) and (display_height * 0.86) <= mouse[1] <= ((display_height * 0.86) + 77):
+                    print("You pressed \'stand\'!")
 
-    # call our setup function
-    setup()
+        # call our setup function
+        setup()
 
-    # get mouse x and y coordinates
-    mouse = pyg.mouse.get_pos()
+        # get mouse x and y coordinates
+        mouse = pyg.mouse.get_pos()
 
-    # update display
-    pyg.display.update()
-    clock.tick(60)
+        # update display
+        pyg.display.update()
+        clock.tick(60)
 
+
+main(cards_dealt_player)
 pyg.quit()
 quit()
