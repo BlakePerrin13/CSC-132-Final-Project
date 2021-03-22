@@ -50,12 +50,13 @@ card2_y = (display_height * 0.1)
 used_cards = []
 cards_dealt_player = 0
 cards_dealt_dealer = 0
-# FIXME: USED CARDS LIST ISN'T EVEN BEING USED WHAT THE CRAP
 
 
 # randomly gen cards but do not repeat cards
 def random_card():
-    return choice([i for i in range(0, 51) if i not in used_cards])
+    card = choice([i for i in range(0, 51) if i not in used_cards])
+    used_cards.append(card)
+    return card
 
 
 # use card name to determine value (removes last character and returns number, prints 10 if face card or 1 if Ace)
@@ -125,7 +126,7 @@ def reset():
     objs_cards_dealer = []
     objs_cards_player = []
     used_cards = []
-    # TODO: MAKE DEAL CARD FUNCTION WITH "PERSON" PARAMETER -- takes list and deals card to it (simple right?)
+    # TODO: MAKE DEAL CARD FUNCTION WITH "PERSON" PARAMETER -- takes list and deals card to it
 
 
 # begin main game loop
