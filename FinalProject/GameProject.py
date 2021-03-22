@@ -54,9 +54,14 @@ cards_dealt_dealer = 0
 
 # randomly gen cards but do not repeat cards
 def random_card():
-    card = choice([i for i in range(0, 51) if i not in used_cards])
-    used_cards.append(card)
-    return card
+    try:
+        card = choice([i for i in range(0, 51) if i not in used_cards])
+        used_cards.append(card)
+        return card
+    
+    # error to return if try to draw from empty deck (should never happen in real game)
+    except:
+        raise IndexError("No cards left in deck; nothing to return")
 
 
 # use card name to determine value (removes last character and returns number, prints 10 if face card or 1 if Ace)
