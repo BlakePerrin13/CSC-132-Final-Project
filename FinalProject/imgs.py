@@ -12,6 +12,7 @@ def card_load(name):
 
 # separate lists to store card images and names (same index in both lists is same card)
 # it's gross but dictionaries don't work with loaded images oh well
+# cards is images, card_names is file names "AS, KH, etc."
 cards = []
 card_names = []
 

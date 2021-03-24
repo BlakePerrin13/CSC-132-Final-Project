@@ -24,3 +24,13 @@ class Button(Object):
         super().__init__(x, y)
         self.name = name
         self.pressed = pressed
+
+
+# class to store player data, will be useful for if we add more players, also cleans up code
+# cards refers to a list of cards (the hand)
+class Player:
+    def __init__(self, name, cards, aces, score):
+        self.name = name
+        self.cards = cards
+        self.aces = aces
+        self.score = score
