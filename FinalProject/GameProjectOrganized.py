@@ -42,13 +42,11 @@ def deal_card(player):
 
 # use card name to determine value (removes last character and returns number, prints 10 if face card or 1 if Ace)
 def card_value(name, player):
-    global total_player
-    global total_dealer
     simplified = name[:-1]
     if simplified in ["K", "Q", "J"]:
         return 10
     elif simplified == "A":
-        if total_player > 10 or total_dealer > 10:
+        if player.score > 10:
             return 1
         else:
             player.aces += 1
@@ -59,24 +57,11 @@ def card_value(name, player):
 
 # determine total point value of cards for player
 def player_score(player):
-    global total_player
     n = len(player.cards)
-    total_player += player.cards[n - 1].val
-    if total_player > 21 and player.aces > 0:
-        total_player -= 10
+    player.score += player.cards[n - 1].val
+    if player.score > 21 and player.aces > 0:
+        player.score -= 10
         player.aces -= 1
-    return total_player
-
-
-# determine the total value of cards for dealer
-def dealer_score(dealer):
-    global total_dealer
-    n = len(dealer.cards)
-    total_dealer += dealer.cards[n - 1].val
-    if total_dealer > 21 and dealer.aces > 0:
-        total_dealer -= 10
-        dealer.aces -= 1
-    return total_dealer
 
 
 # define function to draw objects
@@ -98,8 +83,8 @@ def setup():
         drawObjs(card)
     for card in dealer.cards:
         drawObjs(card)
-    gameDisplay.blit(font.render('Player Total: {}'.format(total_player), True, white), (20, 60))    
-    gameDisplay.blit(font.render('Dealer Total: {}'.format(total_dealer), True, white), (20, 20))
+    gameDisplay.blit(font.render('Player Total: {}'.format(player1.score), True, white), (20, 60))
+    gameDisplay.blit(font.render('Dealer Total: {}'.format(dealer.score), True, white), (20, 20))
 
 
 # define reset function
@@ -116,7 +101,6 @@ def reset():
 
 # begin main game loop
 def main(player, dealer):
-    global total_dealer
     global END
     while not END:
         for event in pyg.event.get():
@@ -136,9 +120,9 @@ def main(player, dealer):
                 # stand button
                 if (display_width * 0.12) <= mouse[0] <= ((display_width * 0.12) + 77) and (display_height * 0.86) <= mouse[1] <= ((display_height * 0.86) + 77):
                     # While dealers score is less than 18, dealer will keep hitting
-                    while total_dealer < 18:
+                    while dealer.score < 18:
                         deal_card(dealer)
-                        dealer_score(dealer)
+                        player_score(dealer)
 
         # call our setup function
         setup()
@@ -153,18 +137,13 @@ def main(player, dealer):
 
 # initialize players and deal first cards
 # should add a players list to call players from (will be necessary when there are more players)
-# possibly turn this into an 'initialization' function to call whenever needed? idk if that would be more efficient
 def initialization():
-    global total_player
-    global total_dealer
-    total_player = 0
-    total_dealer = 0
     player1 = obj.Player("player1", [], 0, 0)
     dealer = obj.Player("dealer", [], 0, 0)
     deal_card(player1)
     deal_card(dealer)
     player_score(player1)
-    dealer_score(dealer)
+    player_score(dealer)
     return player1, dealer
 
 
@@ -215,8 +194,6 @@ objs = [
     obj.Button(display_width * 0.12, display_height * 0.86, 'stand')
 ]
 
-total_player = 0
-total_dealer = 0
 player1, dealer = initialization()
 main(player1, dealer)
 pyg.quit()
