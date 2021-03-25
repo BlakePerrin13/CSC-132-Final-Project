@@ -5,7 +5,6 @@ import pygame as pyg
 from random import choice
 import ObjClasses as obj
 import imgs
-from time import sleep
 
 # initiate pygame
 pyg.init()
@@ -122,17 +121,21 @@ objs = [
     obj.Button(display_width * 0.12, display_height * 0.86, 'stand')
 ]
 
-# initialize players and deal first cards
+# added an initialization function
+# initialize players, score, and deal first cards
 # should add a players list to call players from (will be necessary when there are more players)
-# possibly turn this into an 'initialization' function to call whenever needed? idk if that would be more efficient
-player1 = obj.Player("player1", [], 0, 0)
-dealer = obj.Player("dealer", [], 0, 0)
-total_player = 0
-total_dealer = 0
-deal_card(player1)
-deal_card(dealer)
-player_score(player1)
-dealer_score(dealer)
+def initialization():
+    global total_player
+    global total_dealer
+    total_player = 0
+    total_dealer = 0
+    player1 = obj.Player("player1", [], 0, 0)
+    dealer = obj.Player("dealer", [], 0, 0)
+    deal_card(player1)
+    deal_card(dealer)
+    player_score(player1)
+    dealer_score(dealer)
+    return player1, dealer
 
 # define function to draw objects
 def drawObjs(object):
@@ -158,16 +161,17 @@ def setup():
 
 
 # define reset function
+# Fixed
 def reset():
     global player1
     global dealer
     global used_cards
-    player1 = obj.Player("player1", [], 0, 0)
-    dealer = obj.Player("dealer", [], 0, 0)
+    player1.cards = []
+    dealer.cards = []
+    player1, dealer = initialization()
     used_cards = []
-    deal_card(player1)
-    deal_card(dealer)
-    # FIXME: after running the reset function the deal_card function is broken (idk why yet)
+    main(player1, dealer)
+    
 
 
 # begin main game loop
@@ -206,7 +210,9 @@ def main(player, dealer):
         pyg.display.update()
         clock.tick(60)
 
-
+total_player = 0
+total_dealer = 0
+player1, dealer = initialization()
 main(player1, dealer)
 pyg.quit()
 quit()
