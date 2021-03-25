@@ -6,9 +6,11 @@ from random import choice
 import ObjClasses as obj
 import imgs
 
+
 # defines function to display images (might be redundant whoops)
 def display_img(img, x, y):
     gameDisplay.blit(img, (x, y))
+
 
 # randomly gen cards but do not repeat cards
 def random_card():
@@ -20,6 +22,7 @@ def random_card():
     # error to return if try to draw from empty deck (should never happen in real game)
     except:
         raise IndexError("No cards left in deck; nothing to return")
+
 
 # function to deal card to given player
 def deal_card(player):
@@ -35,6 +38,7 @@ def deal_card(player):
         player.cards.append(obj.Card((player.cards[len(player.cards) - 1].x + 40), (player.cards[len(player.cards) - 1].y - 20), imgs.card_names[rand_index], card_value(imgs.card_names[rand_index], player), rand_index))
     # print statement to debug dealing (not seen by player)
     print("Card dealt to {}!".format(player.name))
+
 
 # use card name to determine value (removes last character and returns number, prints 10 if face card or 1 if Ace)
 def card_value(name, player):
@@ -52,6 +56,7 @@ def card_value(name, player):
     else:
         return int(simplified)
 
+
 # determine total point value of cards for player
 def player_score(player):
     global total_player
@@ -62,15 +67,17 @@ def player_score(player):
         player.aces -= 1
     return total_player
 
+
 # determine the total value of cards for dealer
 def dealer_score(dealer):
     global total_dealer
     n = len(dealer.cards)
     total_dealer += dealer.cards[n - 1].val
     if total_dealer > 21 and dealer.aces > 0:
-        total_player -= 10
-        player.aces -= 1
+        total_dealer -= 10
+        dealer.aces -= 1
     return total_dealer
+
 
 # define function to draw objects
 def drawObjs(object):
@@ -78,6 +85,7 @@ def drawObjs(object):
         gameDisplay.blit(imgs.cards[object.ind], (object.x, object.y))
     else:
         gameDisplay.blit(getattr(imgs, object.name), (object.x, object.y))
+
 
 # defines setup function to be run at start of loop
 def setup():
@@ -93,6 +101,7 @@ def setup():
     gameDisplay.blit(font.render('Player Total: {}'.format(total_player), True, white), (20, 60))    
     gameDisplay.blit(font.render('Dealer Total: {}'.format(total_dealer), True, white), (20, 20))
 
+
 # define reset function
 def reset():
     global used_cards
@@ -103,7 +112,6 @@ def reset():
     player1, dealer = initialization()
     used_cards = []
     main(player1, dealer)
-
 
 
 # begin main game loop
@@ -141,6 +149,7 @@ def main(player, dealer):
         # update display
         pyg.display.update()
         clock.tick(60)
+
 
 # initialize players and deal first cards
 # should add a players list to call players from (will be necessary when there are more players)
