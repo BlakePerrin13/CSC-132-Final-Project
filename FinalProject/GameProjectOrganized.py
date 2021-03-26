@@ -28,8 +28,11 @@ def random_card():
 def deal_card(player):
     # generates random card number
     rand_index = random_card()
+    # check if player is busted, if so don't deal them
+    if player.bust is True:
+        pass
     # checks if this is first card and who is receiving it (first cards have a specific x,y pair to use)
-    if len(player.cards) == 0 and player.name == "player1":
+    elif len(player.cards) == 0 and player.name == "player1":
         player.cards.append(obj.Card(card1_x, card1_y, imgs.card_names[rand_index], card_value(imgs.card_names[rand_index], player), rand_index))
     elif len(player.cards) == 0 and player.name == "dealer":
         player.cards.append(obj.Card(card2_x, card2_y, imgs.card_names[rand_index], card_value(imgs.card_names[rand_index], player), rand_index))
@@ -37,7 +40,7 @@ def deal_card(player):
     else:
         player.cards.append(obj.Card((player.cards[len(player.cards) - 1].x + 40), (player.cards[len(player.cards) - 1].y - 20), imgs.card_names[rand_index], card_value(imgs.card_names[rand_index], player), rand_index))
     # print statement to debug dealing (not seen by player)
-    print("Card dealt to {}!".format(player.name))
+    print("Card dealt to {}! (if not busted)".format(player.name))
 
 
 # use card name to determine value (removes last character and returns number, prints 10 if face card or 1 if Ace)
@@ -57,11 +60,13 @@ def card_value(name, player):
 
 # determine total point value of cards for player
 def player_score(player):
-    n = len(player.cards)
-    player.score += player.cards[n - 1].val
-    if player.score > 21 and player.aces > 0:
-        player.score -= 10
-        player.aces -= 1
+    if player.bust is False:
+        n = len(player.cards)
+        player.score += player.cards[n - 1].val
+        if player.score > 21 and player.aces > 0:
+            player.score -= 10
+            player.aces -= 1
+    bust_check()
 
 
 # define function to draw objects
@@ -79,28 +84,26 @@ def setup():
     # iterates through lists and draws appropriate objects
     for obj in objs:
         drawObjs(obj)
-    for card in player1.cards:
-        drawObjs(card)
-    for card in dealer.cards:
-        drawObjs(card)
-    gameDisplay.blit(font.render('Player Total: {}'.format(player1.score), True, white), (20, 60))
-    gameDisplay.blit(font.render('Dealer Total: {}'.format(dealer.score), True, white), (20, 20))
+    for p in players:
+        for card in p.cards:
+            drawObjs(card)
+    gameDisplay.blit(font.render('Player Total: {}'.format(players[0].score), True, white), (20, 60))
+    gameDisplay.blit(font.render('Dealer Total: {}'.format(players[1].score), True, white), (20, 20))
 
 
 # define reset function
 def reset():
     global used_cards
-    global player1
-    global dealer
-    player1.cards = []
-    dealer.cards = []
-    player1, dealer = initialization()
+    global players
+    for p in players:
+        p.cards = []
+    players = initialization()
     used_cards = []
-    main(player1, dealer)
+    main(players)
 
 
 # begin main game loop
-def main(player, dealer):
+def main(players):
     global END
     while not END:
         for event in pyg.event.get():
@@ -114,15 +117,15 @@ def main(player, dealer):
                     reset()
                 # hit button, generates new card and adds to card objects list
                 if (display_width * 0.01) <= mouse[0] <= ((display_width * 0.01) + 77) and (display_height * 0.86) <= mouse[1] <= ((display_height * 0.86) + 77):
-                    deal_card(player)
-                    player_score(player1)
+                    deal_card(players[0])
+                    player_score(players[0])
         
                 # stand button
                 if (display_width * 0.12) <= mouse[0] <= ((display_width * 0.12) + 77) and (display_height * 0.86) <= mouse[1] <= ((display_height * 0.86) + 77):
                     # While dealers score is less than 18, dealer will keep hitting
-                    while dealer.score < 18:
-                        deal_card(dealer)
-                        player_score(dealer)
+                    while players[1].score < 18:
+                        deal_card(players[1])
+                        player_score(players[1])
 
         # call our setup function
         setup()
@@ -136,15 +139,34 @@ def main(player, dealer):
 
 
 # initialize players and deal first cards
-# should add a players list to call players from (will be necessary when there are more players)
+# TODO: later add way to generate a new player for every player in num_players
 def initialization():
-    player1 = obj.Player("player1", [], 0, 0)
-    dealer = obj.Player("dealer", [], 0, 0)
-    deal_card(player1)
-    deal_card(dealer)
-    player_score(player1)
-    player_score(dealer)
-    return player1, dealer
+    players = [
+        obj.Player("player1", [], 0, 0),
+        obj.Player("dealer", [], 0, 0)
+    ]
+    for p in players:
+        deal_card(p)
+        player_score(p)
+    return players
+
+
+def bust_check():
+    for p in players:
+        if p.score > 21:
+            p.bust = True
+
+
+# TODO: Add win function that can end game and print winner (give option to play again)
+def win_condition():
+    scores = []
+    for p in players:
+        if p.bust is True:
+            continue
+        else:
+            scores.append(p.score)
+    winner = players[players.index(max(scores))]
+    win()
 
 
 ################################################
@@ -187,6 +209,10 @@ card2_y = (display_height * 0.1)
 # create list for used cards and counters for cards dealt to player/dealer
 used_cards = []
 
+# keep track of number of players (total players adds dealer)
+num_players = 1
+total_players = num_players + 1
+
 # initialize objects
 objs = [
     obj.Button(display_width * 0.9, display_height * 0.87, 'deal'),
@@ -194,7 +220,8 @@ objs = [
     obj.Button(display_width * 0.12, display_height * 0.86, 'stand')
 ]
 
-player1, dealer = initialization()
-main(player1, dealer)
+# initialize players as a list
+players = initialization()
+main(players)
 pyg.quit()
 quit()
