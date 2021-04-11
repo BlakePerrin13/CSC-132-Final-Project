@@ -60,6 +60,7 @@ def card_value(name, player):
 
 # determine total point value of cards for player
 def player_score(player):
+    global players
     if player.bust is False:
         n = len(player.cards)
         player.score += player.cards[n - 1].val
@@ -67,6 +68,7 @@ def player_score(player):
             player.score -= 10
             player.aces -= 1
     bust_check()
+        
 
 
 # define function to draw objects
@@ -119,7 +121,7 @@ def main(players):
                 if (display_width * 0.01) <= mouse[0] <= ((display_width * 0.01) + 77) and (display_height * 0.86) <= mouse[1] <= ((display_height * 0.86) + 77):
                     deal_card(players[0])
                     player_score(players[0])
-        
+                        
                 # stand button
                 if (display_width * 0.12) <= mouse[0] <= ((display_width * 0.12) + 77) and (display_height * 0.86) <= mouse[1] <= ((display_height * 0.86) + 77):
                     # While dealers score is less than 18, dealer will keep hitting
@@ -152,6 +154,7 @@ def initialization():
 
 
 def bust_check():
+    global players
     for p in players:
         if p.score > 21:
             p.bust = True
@@ -221,6 +224,7 @@ objs = [
 ]
 
 # initialize players as a list
+players = []
 players = initialization()
 main(players)
 pyg.quit()
