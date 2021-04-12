@@ -5,6 +5,15 @@ import pygame as pyg
 from random import choice
 import ObjClasses as obj
 import imgs
+import RPi.GPIO as GPIO
+from time import sleep
+
+# Setup GPIO Blackjack Buttons
+# Setup the GPIO pins 
+GPIO.setmode(GPIO.BCM)
+GPIO.setup(18, GPIO.IN, pull_up_down = GPIO.PUD_DOWN)
+GPIO.setup(19, GPIO.IN, pull_up_down = GPIO.PUD_DOWN)
+GPIO.setup(20, GPIO.IN, pull_up_down = GPIO.PUD_DOWN)
 
 
 # defines function to display images (might be redundant whoops)
@@ -89,8 +98,8 @@ def setup():
     for p in players:
         for card in p.cards:
             drawObjs(card)
-    gameDisplay.blit(font.render('Player Total: {}'.format(players[0].score), True, white), (20, 60))
-    gameDisplay.blit(font.render('Dealer Total: {}'.format(players[1].score), True, white), (20, 20))
+    gameDisplay.blit(font.render('Player Total: {}'.format(players[1].score), True, white), (20, 60))
+    gameDisplay.blit(font.render('Dealer Total: {}'.format(players[0].score), True, white), (20, 20))
 
 
 # define reset function
@@ -108,6 +117,14 @@ def reset():
 def main(players):
     global END
     while not END:
+        if GPIO.input(18) == GPIO.HIGH:
+            reset()
+        if GPIO.input(19) == GPIO.HIGH:
+            hit()
+            sleep(0.5)
+        elif GPIO.input(20) == GPIO.HIGH:
+            stand()
+            
         for event in pyg.event.get():
             if event.type == pyg.QUIT:
                 END = True
@@ -119,15 +136,13 @@ def main(players):
                     reset()
                 # hit button, generates new card and adds to card objects list
                 if (display_width * 0.01) <= mouse[0] <= ((display_width * 0.01) + 77) and (display_height * 0.86) <= mouse[1] <= ((display_height * 0.86) + 77):
-                    deal_card(players[0])
-                    player_score(players[0])
+                    hit()
                         
                 # stand button
                 if (display_width * 0.12) <= mouse[0] <= ((display_width * 0.12) + 77) and (display_height * 0.86) <= mouse[1] <= ((display_height * 0.86) + 77):
                     # While dealers score is less than 18, dealer will keep hitting
-                    while players[1].score < 18:
-                        deal_card(players[1])
-                        player_score(players[1])
+                    stand()
+                    
 
         # call our setup function
         setup()
@@ -144,8 +159,8 @@ def main(players):
 # TODO: later add way to generate a new player for every player in num_players
 def initialization():
     players = [
-        obj.Player("player1", [], 0, 0),
-        obj.Player("dealer", [], 0, 0)
+        obj.Player("dealer", [], 0, 0),
+        obj.Player("player1", [], 0, 0)
     ]
     for p in players:
         deal_card(p)
@@ -166,11 +181,29 @@ def win_condition():
     for p in players:
         if p.bust is True:
             continue
+        if p.score > players[0].score and players[0].bust != True:
+            winner = p
         else:
-            scores.append(p.score)
-    winner = players[players.index(max(scores))]
-    win()
+            winner = players[0]
+    win(winner)
 
+def win(player):
+    print("Winner = {}".format(player.name))
+
+def hit():
+    deal_card(players[1])
+    player_score(players[1])
+    if players[1].bust == True:
+        stand()
+
+def stand():
+    sleep(0.5)
+    if players[0].score < 18:
+        deal_card(players[0])
+        player_score(players[0])
+        stand()
+    if players[0].score > 18:
+        win_condition()
 
 ################################################
 ################# Main Game ####################
@@ -227,5 +260,7 @@ objs = [
 players = []
 players = initialization()
 main(players)
+GPIO.cleanup()
 pyg.quit()
 quit()
+
