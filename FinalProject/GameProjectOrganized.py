@@ -76,7 +76,7 @@ def player_score(player):
         if player.score > 21 and player.aces > 0:
             player.score -= 10
             player.aces -= 1
-    bust_check()
+    bust_check(player)
 
 
 # define function to draw objects
@@ -169,8 +169,8 @@ def main(players):
 # TODO: later add way to generate a new player for every player in num_players
 def initialization():
     players = [
-        obj.Player("dealer", [], 0, 0),
-        obj.Player("player1", [], 0, 0)
+        obj.Player("dealer", [], 0, 0, 0),
+        obj.Player("player1", [], 0, 0, 1000)
     ]
     for p in players:
         deal_card(p)
@@ -178,24 +178,23 @@ def initialization():
     return players
 
 
-def bust_check():
-    global players
-    for p in players:
-        if p.score > 21:
-            p.bust = True
+def bust_check(player):
+    if player.score > 21:
+        player.bust = True
 
 
 # TODO: Add win function that can end game and print winner (give option to play again)
 def win_condition():
-    scores = []
     for p in players:
         if p.bust is True:
             continue
-        if p.score > players[0].score and players[0].bust != True:
+        if players[0].bust == True:
+            winner = p
+        elif p.score > players[0].score:
             winner = p
         else:
             winner = players[0]
-    win(winner)
+        win(winner)
 
 
 def win(player):
@@ -215,8 +214,17 @@ def stand():
         deal_card(players[0])
         player_score(players[0])
         stand()
-    if players[0].score > 18:
+    else:
         win_condition()
+
+def bet(player):
+    amount = int(input("How much would you like to bet. (Must be Less than or Equal to {}: ".format(player.bet)))
+    if amount > player.bet:
+        print("Invalid Bet. Must be Less than or Equal to {}".format(player.bet))
+        bet()
+    else:
+        player.bet = amount
+    print(player.bet)
 
 
 ################################################
