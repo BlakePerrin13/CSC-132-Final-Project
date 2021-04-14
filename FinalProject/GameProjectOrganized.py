@@ -11,9 +11,9 @@ from time import sleep
 # Setup GPIO Blackjack Buttons
 # Setup the GPIO pins 
 GPIO.setmode(GPIO.BCM)
-GPIO.setup(18, GPIO.IN, pull_up_down = GPIO.PUD_DOWN)
-GPIO.setup(19, GPIO.IN, pull_up_down = GPIO.PUD_DOWN)
-GPIO.setup(20, GPIO.IN, pull_up_down = GPIO.PUD_DOWN)
+GPIO.setup(18, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
+GPIO.setup(19, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
+GPIO.setup(20, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
 
 
 # defines function to display images (might be redundant whoops)
@@ -77,7 +77,6 @@ def player_score(player):
             player.score -= 10
             player.aces -= 1
     bust_check()
-        
 
 
 # define function to draw objects
@@ -113,6 +112,23 @@ def reset():
     main(players)
 
 
+# button check functions:
+def deal_button_check(mouse):
+    if (display_width * 0.9) <= mouse[0] <= ((display_width * 0.9) + 70) and (display_height * 0.87) <= mouse[1] <= ((display_height * 0.87) + 70):
+        reset()
+
+
+def hit_button_check(mouse):
+    if (display_width * 0.01) <= mouse[0] <= ((display_width * 0.01) + 77) and (display_height * 0.86) <= mouse[1] <= ((display_height * 0.86) + 77):
+        hit()
+
+
+def stand_button_check(mouse):
+    if (display_width * 0.12) <= mouse[0] <= ((display_width * 0.12) + 77) and (display_height * 0.86) <= mouse[1] <= ((display_height * 0.86) + 77):
+        # While dealers score is less than 18, dealer will keep hitting
+        stand()
+
+
 # begin main game loop
 def main(players):
     global END
@@ -132,17 +148,11 @@ def main(players):
             # detect if mouse button is pressed on buttons (and call appropriate functions)
             if event.type == pyg.MOUSEBUTTONDOWN:
                 # deal button
-                if (display_width * 0.9) <= mouse[0] <= ((display_width * 0.9) + 70) and (display_height * 0.87) <= mouse[1] <= ((display_height * 0.87) + 70):
-                    reset()
+                deal_button_check(mouse)
                 # hit button, generates new card and adds to card objects list
-                if (display_width * 0.01) <= mouse[0] <= ((display_width * 0.01) + 77) and (display_height * 0.86) <= mouse[1] <= ((display_height * 0.86) + 77):
-                    hit()
-                        
+                hit_button_check(mouse)
                 # stand button
-                if (display_width * 0.12) <= mouse[0] <= ((display_width * 0.12) + 77) and (display_height * 0.86) <= mouse[1] <= ((display_height * 0.86) + 77):
-                    # While dealers score is less than 18, dealer will keep hitting
-                    stand()
-                    
+                stand_button_check(mouse)
 
         # call our setup function
         setup()
@@ -187,14 +197,17 @@ def win_condition():
             winner = players[0]
     win(winner)
 
+
 def win(player):
     print("Winner = {}".format(player.name))
+
 
 def hit():
     deal_card(players[1])
     player_score(players[1])
     if players[1].bust == True:
         stand()
+
 
 def stand():
     sleep(0.5)
@@ -204,6 +217,7 @@ def stand():
         stand()
     if players[0].score > 18:
         win_condition()
+
 
 ################################################
 ################# Main Game ####################
@@ -257,7 +271,6 @@ objs = [
 ]
 
 # initialize players as a list
-players = []
 players = initialization()
 main(players)
 GPIO.cleanup()
