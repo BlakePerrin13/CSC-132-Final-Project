@@ -27,5 +27,6 @@ for entry in os.listdir('./card_images/'):
 deal = pyg.transform.rotozoom(pyg.image.load('./card_images/deal.png'), 0, 1)
 hit = pyg.transform.rotozoom(pyg.image.load('./card_images/hit.png'), 0, 1.1)
 stand = pyg.transform.rotozoom(pyg.image.load('./card_images/stand.png'), 0, 1.1)
+split = pyg.transform.rotozoom(pyg.image.load('./card_images/split.png'), 0, 1.1)
 
 
