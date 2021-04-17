@@ -5,15 +5,15 @@ import pygame as pyg
 from random import choice
 import ObjClasses as obj
 import imgs
-import RPi.GPIO as GPIO
+##import RPi.GPIO as GPIO
 from time import sleep
 
 # Setup GPIO Blackjack Buttons
 # Setup the GPIO pins 
-GPIO.setmode(GPIO.BCM)
-GPIO.setup(18, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
-GPIO.setup(19, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
-GPIO.setup(20, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
+##GPIO.setmode(GPIO.BCM)
+##GPIO.setup(18, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
+##GPIO.setup(19, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
+##GPIO.setup(20, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
 
 
 # defines function to display images (might be redundant whoops)
@@ -88,7 +88,7 @@ def drawObjs(object):
 
 
 # defines setup function to be run at start of loop
-def setup():
+def setup(players):
     # fills background with green (can potentially be changed to image file later)
     gameDisplay.fill(green)
     # iterates through lists and draws appropriate objects
@@ -105,10 +105,15 @@ def setup():
 def reset():
     global used_cards
     global players
+    used_cards = []
     for p in players:
         p.cards = []
-    players = initialization()
-    used_cards = []
+        p.score = 0
+        p.bet = 0
+        p.aces = 0
+        p.bust = False
+        p.win = False
+    initialization(players)
     main(players)
 
 
@@ -128,19 +133,22 @@ def stand_button_check(mouse):
         # While dealers score is less than 18, dealer will keep hitting
         stand()
 
+def split_button_check(mouse):
+    if (display_width * 0.8) <= mouse[0] <= ((display_width * 0.8) + 77) and (display_height * 0.86) <= mouse[1] <= ((display_height * 0.86) + 77):
+        print("Split")
 
 # begin main game loop
 def main(players):
     global END
     while not END:
-        if GPIO.input(18) == GPIO.HIGH:
-            reset()
-        if GPIO.input(19) == GPIO.HIGH:
-            hit()
-            sleep(0.5)
-        elif GPIO.input(20) == GPIO.HIGH:
-            stand()
-            
+##        if GPIO.input(18) == GPIO.HIGH:
+##            reset()
+##        if GPIO.input(19) == GPIO.HIGH:
+##            hit()
+##            sleep(0.5)
+##        elif GPIO.input(20) == GPIO.HIGH:
+##            stand()
+##            
         for event in pyg.event.get():
             if event.type == pyg.QUIT:
                 END = True
@@ -153,9 +161,11 @@ def main(players):
                 hit_button_check(mouse)
                 # stand button
                 stand_button_check(mouse)
+                # split button
+                split_button_check(mouse)
 
         # call our setup function
-        setup()
+        setup(players)
 
         # get mouse x and y coordinates
         mouse = pyg.mouse.get_pos()
@@ -167,15 +177,28 @@ def main(players):
 
 # initialize players and deal first cards
 # TODO: later add way to generate a new player for every player in num_players
-def initialization():
-    players = [
-        obj.Player("dealer", [], 0, 0, 0),
-        obj.Player("player1", [], 0, 0, 1000)
-    ]
+def initialization(players):
+    setup(players)
+    pyg.display.update()
+    sleep(0.5)
     for p in players:
-        deal_card(p)
-        player_score(p)
-    return players
+        if p.name == "dealer":
+            continue
+        bet(p)
+    for i in range(2):
+        for p in players:
+            if p.name == "dealer":
+                continue
+            deal_card(p)
+            player_score(p)
+            sleep(0.5)
+            setup(players)
+            pyg.display.update()
+        deal_card(players[0])
+        player_score(players[0])
+        sleep(0.5)
+        setup(players)
+        pyg.display.update()
 
 
 def bust_check(player):
@@ -186,11 +209,15 @@ def bust_check(player):
 # TODO: Add win function that can end game and print winner (give option to play again)
 def win_condition():
     for p in players:
-        if p.bust is True:
+        if p.name == "dealer":
             continue
-        if players[0].bust == True:
+        if p.bust is True:
+            if p.chips == 0:
+                p.chips = 100
+            winner = players[0]
+        elif players[0].bust == True:
             winner = p
-        elif p.score > players[0].score:
+        elif p.score > players[0].score and p.bust != True:
             winner = p
         else:
             winner = players[0]
@@ -198,31 +225,47 @@ def win_condition():
 
 
 def win(player):
-    print("Winner = {}".format(player.name))
+    if player.name == "dealer":
+        print("Better Luck Next Time")
+    else:
+        print("Congratulations {}, you've won {} chips!".format(player.name, player.bet*2))
+        player.chips = player.chips + player.bet*2
+        print(player.chips)
 
 
 def hit():
     deal_card(players[1])
     player_score(players[1])
+    setup(players)
+    pyg.display.update()
+    sleep(0.5)
     if players[1].bust == True:
         stand()
+    
 
 
 def stand():
     sleep(0.5)
-    if players[0].score < 18:
+    if players[0].score < 17:
         deal_card(players[0])
         player_score(players[0])
+        sleep(0.5)
+        setup(players)
+        pyg.display.update()
         stand()
     else:
         win_condition()
 
 def bet(player):
-    amount = int(input("How much would you like to bet. (Must be Less than or Equal to {}: ".format(player.bet)))
-    if amount > player.bet:
-        print("Invalid Bet. Must be Less than or Equal to {}".format(player.bet))
-        bet()
+    amount = int(input("How much would you like to bet. (Must be Less than or Equal to {}: ".format(player.chips)))
+    if amount > player.chips:
+        print("Invalid Bet. Must be Less than or Equal to {}".format(player.chips))
+        bet(player)
     else:
+        if amount == player.chips:
+            player.chips = 0
+        else:
+            player.chips -= amount
         player.bet = amount
     print(player.bet)
 
@@ -275,11 +318,16 @@ total_players = num_players + 1
 objs = [
     obj.Button(display_width * 0.9, display_height * 0.87, 'deal'),
     obj.Button(display_width * 0.01, display_height * 0.86, 'hit'),
-    obj.Button(display_width * 0.12, display_height * 0.86, 'stand')
+    obj.Button(display_width * 0.12, display_height * 0.86, 'stand'),
+    obj.Button(display_width * 0.8, display_height * 0.86, 'split')
 ]
 
 # initialize players as a list
-players = initialization()
+players = [
+        obj.Player("dealer", [], 0, 0, 0, 0),
+        obj.Player("player1", [], 0, 0, 1000, 0)
+    ]
+initialization(players)
 main(players)
 GPIO.cleanup()
 pyg.quit()
