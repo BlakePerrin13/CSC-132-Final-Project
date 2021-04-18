@@ -69,14 +69,26 @@ def card_value(name, player):
 
 # determine total point value of cards for player
 def player_score(player):
-    global players
+    global counter
     if player.bust is False:
-        n = len(player.cards)
-        player.score += player.cards[n - 1].val
+        if counter == 0:
+            n = len(player.cards)
+            player.score += player.cards[n - 1].val
+        if counter == 1:
+            player.score = player.cards[0].val
+            counter = 0
         if player.score > 21 and player.aces > 0:
             player.score -= 10
             player.aces -= 1
     bust_check(player)
+
+def split_score(player):
+    if player.splitBust is False:
+        n = len(player.splitCards)
+        player.splitScore += player.splitCards[n - 1].val
+        if player.splitScore > 21 and player.splitAces > 0:
+            player.splitScore -= 10
+            player.splitAces -= 1
 
 
 # define function to draw objects
@@ -97,9 +109,14 @@ def setup(players):
     for p in players:
         for card in p.cards:
             drawObjs(card)
-    gameDisplay.blit(font.render('Player Total: {}'.format(players[1].score), True, white), (20, 60))
+        for card in p.splitCards:
+            drawObjs(card)
+    if players[1].split == False:
+        gameDisplay.blit(font.render('Player Total: {}'.format(players[1].score), True, white), (20, 60))
+    if players[1].split == True:
+        gameDisplay.blit(font.render('Hand 2 Total: {}'.format(players[1].splitScore), True, white), (20, 100))
+        gameDisplay.blit(font.render('Hand 1 Total: {}'.format(players[1].score), True, white), (20, 60))
     gameDisplay.blit(font.render('Dealer Total: {}'.format(players[0].score), True, white), (20, 20))
-
 
 # define reset function
 def reset():
@@ -111,6 +128,8 @@ def reset():
         p.score = 0
         p.bet = 0
         p.aces = 0
+        p.splitBet = 0
+        p.splitCards = []
         p.bust = False
         p.win = False
     initialization(players)
@@ -135,7 +154,7 @@ def stand_button_check(mouse):
 
 def split_button_check(mouse):
     if (display_width * 0.8) <= mouse[0] <= ((display_width * 0.8) + 77) and (display_height * 0.86) <= mouse[1] <= ((display_height * 0.86) + 77):
-        print("Split")
+        split(players[1])
 
 # begin main game loop
 def main(players):
@@ -269,6 +288,31 @@ def bet(player):
         player.bet = amount
     print(player.bet)
 
+def split(player):
+    global counter
+    if len(player.cards) < 2:
+        pass
+    elif player.cards[0].name[0] == player.cards[1].name[0] and len(player.cards) == 2:
+        player.split = True
+        counter = 1
+        player.chips -= player.bet
+        player.splitBet += player.bet 
+        card1_x = (display_width * 0.35)
+        card1_y = (display_height * 0.56)
+        card2_x = (display_width * 0.55)
+        card2_y = (display_height * 0.56)
+        player.cards[0].x = card1_x
+        player.cards[0].y = card1_y
+        player.cards[1].x = card2_x
+        player.cards[1].y = card2_y
+        for card in player.cards:
+            drawObjs(card)
+        player.splitCards.append(player.cards[1])
+        player.cards.remove(player.cards[1])
+        player_score(player)
+        split_score(player)
+    else:
+        print("cards do not match")
 
 ################################################
 ################# Main Game ####################
@@ -313,6 +357,7 @@ used_cards = []
 # keep track of number of players (total players adds dealer)
 num_players = 1
 total_players = num_players + 1
+counter = 0
 
 # initialize objects
 objs = [
