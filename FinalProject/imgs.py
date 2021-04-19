@@ -12,6 +12,7 @@ def card_load(name):
 
 # separate lists to store card images and names (same index in both lists is same card)
 # it's gross but dictionaries don't work with loaded images oh well
+# cards is images, card_names is file names "AS, KH, etc."
 cards = []
 card_names = []
 
@@ -26,5 +27,5 @@ for entry in os.listdir('./card_images/'):
 deal = pyg.transform.rotozoom(pyg.image.load('./card_images/deal.png'), 0, 1)
 hit = pyg.transform.rotozoom(pyg.image.load('./card_images/hit.png'), 0, 1.1)
 stand = pyg.transform.rotozoom(pyg.image.load('./card_images/stand.png'), 0, 1.1)
-
+split = pyg.transform.rotozoom(pyg.image.load('./card_images/split.png'), 0, 1.1)
 
