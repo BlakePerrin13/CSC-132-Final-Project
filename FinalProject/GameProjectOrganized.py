@@ -20,6 +20,7 @@ from time import sleep
 def display_img(img, x, y):
     gameDisplay.blit(img, (x, y))
 
+
 # randomly gen cards but do not repeat cards
 def random_card():
     try:
@@ -30,6 +31,7 @@ def random_card():
     # error to return if try to draw from empty deck (should never happen in real game)
     except:
         raise IndexError("No cards left in deck; nothing to return")
+
 
 # function to deal card to given player
 def deal_card(player):
@@ -49,6 +51,7 @@ def deal_card(player):
     # print statement to debug dealing (not seen by player)
     print("Card dealt to {}! (if not busted)".format(player.name))
 
+
 def split_deal(player):
     rand_index = random_card()
     # check if player is busted, if so don't deal them
@@ -59,13 +62,14 @@ def split_deal(player):
     # print statement to debug dealing (not seen by player)
     print("Card dealt to {} Split Hand! (if not busted)".format(player.name))
 
+
 # use card name to determine value (removes last character and returns number, prints 10 if face card or 1 if Ace)
 def card_value(name, player):
     simplified = name[:-1]
     if simplified in ["K", "Q", "J"]:
         return 10
     elif simplified == "A":
-        if player.split != True:
+        if player.split is not True:
             if player.score > 10:
                 return 1
             else:
@@ -95,6 +99,7 @@ def player_score(player):
             player.score -= 10
             player.aces -= 1
     bust_check(player)
+
 
 def split_score(player):
     if player.splitBust is False:
@@ -129,14 +134,15 @@ def setup(players):
             drawObjs(card)
         for card in p.splitCards:
             drawObjs(card)
-    if players[1].split == False:
+    if players[1].split is False:
         gameDisplay.blit(font.render('Player Total: {}'.format(players[1].score), True, white), (20, 60))
-    if players[1].split == True:
+    if players[1].split is True:
         gameDisplay.blit(font.render('Hand 2 Total: {}'.format(players[1].splitScore), True, white), (20, 100))
         gameDisplay.blit(font.render('Hand 1 Total: {}'.format(players[1].score), True, white), (20, 60))
     gameDisplay.blit(font.render('Dealer Total: {}'.format(players[0].score), True, white), (20, 20))
     gameDisplay.blit(font.render('Chips: {}'.format(players[1].chips), True, white), (600, 20))
     gameDisplay.blit(font.render('    Bet: {}'.format(players[1].bet), True, white), (600, 60))
+
 
 # define reset function
 def reset():
@@ -178,22 +184,24 @@ def stand_button_check(mouse):
         # While dealers score is less than 18, dealer will keep hitting
         stand(players[1])
 
+
 def split_button_check(mouse):
     if (display_width * 0.8) <= mouse[0] <= ((display_width * 0.8) + 77) and (display_height * 0.86) <= mouse[1] <= ((display_height * 0.86) + 77):
         split(players[1])
-        
+
+
 # begin main game loop
 def main(players):
     global END
     while not END:
-##        if GPIO.input(18) == GPIO.HIGH:
-##            reset()
-##        if GPIO.input(19) == GPIO.HIGH:
-##            hit()
-##            sleep(0.5)
-##        elif GPIO.input(20) == GPIO.HIGH:
-##            stand()
-##            
+       # if GPIO.input(18) == GPIO.HIGH:
+       #     reset()
+       # if GPIO.input(19) == GPIO.HIGH:
+       #     hit()
+       #     sleep(0.5)
+       # elif GPIO.input(20) == GPIO.HIGH:
+       #     stand()
+
         for event in pyg.event.get():
             if event.type == pyg.QUIT:
                 END = True
@@ -245,13 +253,16 @@ def initialization(players):
         setup(players)
         pyg.display.update()
 
+
 def bust_check(player):
     if player.score > 21:
         player.bust = True
 
+
 def split_bust_check(player):
     if player.splitScore > 21:
         player.splitBust = True
+
 
 def win_condition():
     for p in players:
@@ -261,24 +272,24 @@ def win_condition():
             print("You hit Blackjack! You have recieved {} chips.".format(p.bet*1.5))
             p.chips += p.bet*1.5
             print(p.chips)
-        if p.split == True:
+        if p.split is True:
             if p.splitScore == 21:
                 print("You hit Blackjack! You have recieved {} chips.".format(p.bet*1.5))
                 p.chips += p.bet*1.5
                 print(p.chips)
-        elif players[0].bust == True:
-            if p.bust == True:
+        elif players[0].bust is True:
+            if p.bust is True:
                 if p.chips == 0:
                     p.chips = 100
                 print("Better Luck Next Time")
-            elif p.bust != True:
+            elif p.bust is not True:
                 print("Congratulations {}, you've won {} chips!".format(p.name, p.bet*2))
                 p.chips += p.bet*2
                 print(p.chips)
-            if p.split == True:
-                if p.splitBust == True:
+            if p.split is True:
+                if p.splitBust is True:
                     print("Better Luck Next Time")
-                elif p.splitBust != True:
+                elif p.splitBust is not True:
                     print("Congratulations {}, you've won {} chips!".format(p.name, p.bet*2))
                     p.chips += p.bet*2
                     print(p.chips)      
@@ -286,10 +297,10 @@ def win_condition():
             if p.chips == 0:
                 p.chips = 100
             print("Better Luck Next Time")
-            if p.split == True:
-                if p.splitBust == True:
+            if p.split is True:
+                if p.splitBust is True:
                     print("Better Luck Next Time")
-                elif p.splitBust != True:
+                elif p.splitBust is not True:
                     if p.splitBet == players[0].score:
                         print("Push! You have recieved {} chips.".format(p.bet))
                         p.chips += p.bet
@@ -300,7 +311,7 @@ def win_condition():
                         print(p.chips)
                     elif p.splitBet < players[0].score:
                          print("Better Luck Next Time")
-        elif p.splitBust == True:
+        elif p.splitBust is True:
             if p.score == players[0].score:
                 print("Push! You have recieved {} chips.".format(p.bet))
                 p.chips += p.bet
@@ -327,7 +338,7 @@ def win_condition():
                 if p.chips == 0:
                     p.chips = 100
                 print("Better Luck Next Time")
-            if p.split == True:
+            if p.split is True:
                 if p.splitScore == players[0].score:
                     print("Push, you have recieved {} chips.".format(p.bet))
                     p.chips += p.bet
@@ -340,6 +351,7 @@ def win_condition():
                     if p.chips == 0:
                         p.chips = 100
                     print("Better Luck Next Time")
+
 
 def win(player):
     if player.name == "dealer":
@@ -363,6 +375,7 @@ def win(player):
             player.chips += player.bet*2
             print(player.chips)
 
+
 def hit(player):
     if player.stand == True and player.split == True:
         split_deal(player)
@@ -370,7 +383,7 @@ def hit(player):
         setup(players)
         pyg.display.update()
         sleep(0.5)
-        if player.splitBust == True:
+        if player.splitBust is True:
             stand(player)
     else:   
         deal_card(player)
@@ -378,20 +391,22 @@ def hit(player):
         setup(players)
         pyg.display.update()
         sleep(0.5)
-        if players[1].bust == True:
+        if players[1].bust is True:
             stand(players[0])
+
 
 def stand(player):
     sleep(0.5)
-    if player.stand == True:
+    if player.stand is True:
         splitStand = True
         finalStand()
-    elif player.split == True:
+    elif player.split is True:
         player.stand = True
-    elif player.stand == True and player.splitStand == True:
+    elif player.stand is True and player.splitStand is True:
         finalStand()
     else:
         finalStand()
+
 
 def finalStand():
     if players[0].score < 17:
@@ -403,6 +418,7 @@ def finalStand():
         finalStand()
     else:
         win_condition()
+
 
 def bet(player):
     amount = input("How much would you like to bet. (Must be Less than or Equal to {}): ".format(player.chips))
@@ -425,6 +441,7 @@ def bet(player):
         print("Invalid bet. Bet must be a positive whole number")
         bet(player)
 
+
 def check_user_input(input):
     try:
         # convert input to integer
@@ -432,6 +449,7 @@ def check_user_input(input):
         return "int"
     except ValueError:
         return "other"
+
 
 def split(player):
     global counter
@@ -462,6 +480,7 @@ def split(player):
 ################################################
 ################# Main Game ####################
 ################################################
+
 
 # initiate pygame
 pyg.init()
@@ -519,7 +538,6 @@ players = [
     ]
 initialization(players)
 main(players)
-GPIO.cleanup()
+# GPIO.cleanup()
 pyg.quit()
 quit()
-
