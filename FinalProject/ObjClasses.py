@@ -10,8 +10,7 @@ class Object:
 # val specifies value of card i.e. King is 10
 # ind tells the index in list of cards
 class Card(Object):
-    def
-    __init__(self, x, y, name, val, ind):
+    def __init__(self, x, y, name, val, ind):
         super().__init__(x, y)
         self.name = name
         self.val = val
