@@ -28,5 +28,8 @@ deal = pyg.transform.rotozoom(pyg.image.load('./card_images/deal.png'), 0, 1)
 hit = pyg.transform.rotozoom(pyg.image.load('./card_images/hit.png'), 0, 1.1)
 stand = pyg.transform.rotozoom(pyg.image.load('./card_images/stand.png'), 0, 1.1)
 split = pyg.transform.rotozoom(pyg.image.load('./card_images/split.png'), 0, 1.1)
+purple_back = pyg.transform.rotozoom(pyg.image.load('./card_images/purple_back.png'), 0, 0.2)
+card_names.append("purple_back")
+cards.append(purple_back)
 
 

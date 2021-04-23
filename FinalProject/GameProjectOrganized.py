@@ -45,6 +45,11 @@ def deal_card(player):
         player.cards.append(obj.Card(card1_x, card1_y, imgs.card_names[rand_index], card_value(imgs.card_names[rand_index], player), rand_index))
     elif len(player.cards) == 0 and player.name == "dealer":
         player.cards.append(obj.Card(card2_x, card2_y, imgs.card_names[rand_index], card_value(imgs.card_names[rand_index], player), rand_index))
+    elif len(player.cards) == 1 and player.name == "dealer":
+        player.cards.append(obj.Card((player.cards[len(player.cards) - 1].x + 40), (player.cards[len(player.cards) - 1].y - 20), "purple_back", 0, 52))
+    elif len(player.cards) == 2 and player.name == "dealer" and player.cards[1].name == "purple_back":
+        player.cards.remove(player.cards[1])
+        player.cards.append(obj.Card((player.cards[len(player.cards) - 1].x + 40), (player.cards[len(player.cards) - 1].y - 20), imgs.card_names[rand_index], card_value(imgs.card_names[rand_index], player), rand_index))
     # if not first card, just add it on top of last placed card
     else:
         player.cards.append(obj.Card((player.cards[len(player.cards) - 1].x + 40), (player.cards[len(player.cards) - 1].y - 20), imgs.card_names[rand_index], card_value(imgs.card_names[rand_index], player), rand_index))
@@ -141,7 +146,7 @@ def setup(players):
         gameDisplay.blit(font.render('Hand 1 Total: {}'.format(players[1].score), True, white), (20, 60))
     gameDisplay.blit(font.render('Dealer Total: {}'.format(players[0].score), True, white), (20, 20))
     gameDisplay.blit(font.render('Chips: {}'.format(players[1].chips), True, white), (600, 20))
-    gameDisplay.blit(font.render('    Bet: {}'.format(players[1].bet), True, white), (600, 60))
+    gameDisplay.blit(font.render('Bet: {}'.format(players[1].bet), True, white), (600, 60))
 
 
 # define reset function
@@ -247,11 +252,13 @@ def initialization(players):
             sleep(0.5)
             setup(players)
             pyg.display.update()
-        deal_card(players[0])
-        player_score(players[0])
-        sleep(0.5)
-        setup(players)
-        pyg.display.update()
+        if i < 1:
+            deal_card(players[0])
+            player_score(players[0])
+            sleep(0.5)
+            setup(players)
+            pyg.display.update()
+    deal_card(players[0])
 
 
 def bust_check(player):
@@ -487,7 +494,7 @@ pyg.init()
 
 # set display dimensions
 display_width = 800
-display_height = 600
+display_height = 480
 
 # initiate display and caption
 gameDisplay = pyg.display.set_mode((display_width, display_height))
@@ -498,7 +505,7 @@ green = (34, 99, 43)
 white = (255, 255, 255)
 
 # set font for pygame
-font = pyg.font.Font('freesansbold.ttf', 32)
+font = pyg.font.Font('freesansbold.ttf', 25)
 
 # initiates clock and end parameter
 clock = pyg.time.Clock()
