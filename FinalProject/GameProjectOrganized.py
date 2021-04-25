@@ -398,7 +398,7 @@ def hit(player):
         setup(players)
         pyg.display.update()
         sleep(0.5)
-        if players[1].bust is True:
+        if players[1].bust is True and players[1].split != True:
             stand(players[0])
 
 
@@ -462,7 +462,7 @@ def split(player):
     global counter
     if len(player.cards) < 2:
         pass
-    elif player.cards[0].name[0] == player.cards[1].name[0] and len(player.cards) == 2 and player.chips - player.bet > 0:
+    elif player.cards[0].name[0] == player.cards[1].name[0] and len(player.cards) == 2 and player.chips - player.bet >= 0:
         player.split = True
         counter = 1
         player.chips -= player.bet
