@@ -293,14 +293,14 @@ def win_condition():
             if p.bust is True:
                 if p.chips == 0:
                     p.chips = 100
-                print("Better Luck Next Time")
+                display_text("Better Luck Next Time", 300, 220)
             elif p.bust is not True:
                 print("Congratulations {}, you've won {} chips!".format(p.name, p.bet*2))
                 p.chips += p.bet*2
                 print(p.chips)
             if p.split is True:
                 if p.splitBust is True:
-                    print("Better Luck Next Time")
+                    display_text("Better Luck Next Time", 300, 220)
                 elif p.splitBust is not True:
                     print("Congratulations {}, you've won {} chips!".format(p.name, p.bet*2))
                     p.chips += p.bet*2
@@ -308,10 +308,10 @@ def win_condition():
         elif p.bust is True:
             if p.chips == 0:
                 p.chips = 100
-            print("Better Luck Next Time")
+            display_text("Better Luck Next Time", 300, 220)
             if p.split is True:
                 if p.splitBust is True:
-                    print("Better Luck Next Time")
+                    display_text("Better Luck Next Time", 300, 220)
                 elif p.splitBust is not True:
                     if p.splitBet == players[0].score:
                         print("Push! You have recieved {} chips.".format(p.bet))
@@ -322,7 +322,7 @@ def win_condition():
                         p.chips += p.bet*2
                         print(p.chips)
                     elif p.splitBet < players[0].score:
-                         print("Better Luck Next Time")
+                        display_text("Better Luck Next Time", 300, 220)
         elif p.splitBust is True:
             if p.score == players[0].score:
                 print("Push! You have recieved {} chips.".format(p.bet))
@@ -335,8 +335,8 @@ def win_condition():
             elif p.score < players[0].score:
                 if p.chips == 0:
                     p.chips = 100
-                print("Better Luck Next Time") 
-            print("Better Luck Next Time")
+                display_text("Better Luck Next Time", 300, 220)
+            display_text("Better Luck Next Time", 300, 220)
         else:
             if p.score == players[0].score:
                 print("Push! You have recieved {} chips.".format(p.bet))
@@ -349,7 +349,7 @@ def win_condition():
             elif p.score < players[0].score:
                 if p.chips == 0:
                     p.chips = 100
-                print("Better Luck Next Time")
+                display_text("Better Luck Next Time", 300, 220)
             if p.split is True:
                 if p.splitScore == players[0].score:
                     print("Push, you have recieved {} chips.".format(p.bet))
@@ -362,12 +362,12 @@ def win_condition():
                 elif p.splitScore < players[0].score:
                     if p.chips == 0:
                         p.chips = 100
-                    print("Better Luck Next Time")
+                    display_text("Better Luck Next Time", 300, 220)
 
 
 def win(player):
     if player.name == "dealer":
-        print("Better Luck Next Time")
+        display_text("Better Luck Next Time", 300, 220)
     elif player.score == players[0].score:
         if player.score == 21:
             print("You hit Blackjack! You have recieved {} chips.".format(player.bet*1.5))
@@ -379,7 +379,7 @@ def win(player):
             print(player.chips)
     else:
         if player.score == 21:
-            print("You hit Blackjack! You have recieved {} chips.".format(bet*1.5))
+            print("You hit Blackjack! You have recieved {} chips.".format(player.bet*1.5 + player.bet))
             player.chips += player.bet*1.5
             print(player.chips)
         else: 
@@ -389,7 +389,7 @@ def win(player):
 
 
 def hit(player):
-    if player.stand == True and player.split == True:
+    if player.stand is True and player.split is True:
         split_deal(player)
         split_score(player)
         setup(players)
@@ -403,14 +403,14 @@ def hit(player):
         setup(players)
         pyg.display.update()
         sleep(0.5)
-        if players[1].bust is True and players[1].split != True:
+        if players[1].bust is True and players[1].split is not True:
             stand(players[0])
 
 
 def stand(player):
     sleep(0.5)
     if player.stand is True:
-        splitStand = True
+        player.splitStand = True
         finalStand()
     elif player.split is True:
         player.stand = True
