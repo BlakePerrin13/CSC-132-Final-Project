@@ -21,6 +21,10 @@ def display_img(img, x, y):
     gameDisplay.blit(img, (x, y))
 
 
+def display_text(text, x, y):
+    gameDisplay.blit(font.render(text, True, white), (x, y))
+
+
 # randomly gen cards but do not repeat cards
 def random_card():
     try:
@@ -140,13 +144,13 @@ def setup(players):
         for card in p.splitCards:
             drawObjs(card)
     if players[1].split is False:
-        gameDisplay.blit(font.render('Player Total: {}'.format(players[1].score), True, white), (20, 60))
+        display_text('Player Total: {}'.format(players[1].score), 20, 60)
     if players[1].split is True:
-        gameDisplay.blit(font.render('Hand 2 Total: {}'.format(players[1].splitScore), True, white), (20, 100))
-        gameDisplay.blit(font.render('Hand 1 Total: {}'.format(players[1].score), True, white), (20, 60))
-    gameDisplay.blit(font.render('Dealer Total: {}'.format(players[0].score), True, white), (20, 20))
-    gameDisplay.blit(font.render('Chips: {}'.format(players[1].chips), True, white), (600, 20))
-    gameDisplay.blit(font.render('Bet: {}'.format(players[1].bet), True, white), (600, 60))
+        display_text('Hand 2 Total: {}'.format(players[1].splitScore), 20, 100)
+        display_text('Hand 1 Total: {}'.format(players[1].score), 20, 60)
+    display_text('Dealer Total: {}'.format(players[0].score), 20, 20)
+    display_text('Chips: {}'.format(players[1].chips), 600, 20)
+    display_text('Bet: {}'.format(players[1].bet), 600, 60)
 
 
 # define reset function
@@ -207,6 +211,9 @@ def main(players):
        # elif GPIO.input(20) == GPIO.HIGH:
        #     stand()
 
+        # get mouse x and y coordinates
+        mouse = pyg.mouse.get_pos()
+
         for event in pyg.event.get():
             if event.type == pyg.QUIT:
                 END = True
@@ -224,9 +231,6 @@ def main(players):
 
         # call our setup function
         setup(players)
-
-        # get mouse x and y coordinates
-        mouse = pyg.mouse.get_pos()
 
         # update display
         pyg.display.update()
@@ -277,8 +281,9 @@ def win_condition():
             continue
         if p.score == 21:
             print("You hit Blackjack! You have recieved {} chips.".format(p.bet*1.5))
-            p.chips += p.bet*1.5
+            p.chips += int(p.bet*1.5 + p.bet)
             print(p.chips)
+            continue
         if p.split is True:
             if p.splitScore == 21:
                 print("You hit Blackjack! You have recieved {} chips.".format(p.bet*1.5))
