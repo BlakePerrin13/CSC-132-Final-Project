@@ -25,6 +25,16 @@ def display_text(text, x, y):
     gameDisplay.blit(font.render(text, True, white), (x, y))
 
 
+# STUFF FOR PRINTING TEXT TO SCREEN
+def print_text(text):
+    message = font.render(text, True, black)
+    message_rect = message.get_rect(center=(display_width/2, display_height/2))
+    gameDisplay.blit(message, message_rect)
+
+
+MESSAGE = ""
+
+
 # randomly gen cards but do not repeat cards
 def random_card():
     try:
@@ -199,7 +209,7 @@ def split_button_check(mouse):
         split(players[1])
 
 
-# begin main game loop
+# begin main game loop ############################################################################################
 def main(players):
     global END
     while not END:
@@ -232,6 +242,9 @@ def main(players):
         # call our setup function
         setup(players)
 
+        # print current message to display
+        print_text(MESSAGE)
+
         # update display
         pyg.display.update()
         clock.tick(60)
@@ -240,6 +253,8 @@ def main(players):
 # initialize players and deal first cards
 # TODO: later add way to generate a new player for every player in num_players
 def initialization(players):
+    global MESSAGE
+    MESSAGE = ""
     setup(players)
     pyg.display.update()
     sleep(0.5)
@@ -276,114 +291,116 @@ def split_bust_check(player):
 
 
 def win_condition():
+    global MESSAGE
     for p in players:
         if p.name == "dealer":
             continue
         if p.score == 21:
-            print("You hit Blackjack! You have recieved {} chips.".format(p.bet*1.5))
+            MESSAGE = "You hit Blackjack! You have recieved {} chips.".format(p.bet*1.5)
             p.chips += int(p.bet*1.5 + p.bet)
             print(p.chips)
             continue
         if p.split is True:
             if p.splitScore == 21:
-                print("You hit Blackjack! You have recieved {} chips.".format(p.bet*1.5))
+                MESSAGE = "You hit Blackjack! You have recieved {} chips.".format(p.bet*1.5)
                 p.chips += p.bet*1.5
                 print(p.chips)
         elif players[0].bust is True:
             if p.bust is True:
                 if p.chips == 0:
                     p.chips = 100
-                display_text("Better Luck Next Time", 300, 220)
+                MESSAGE = "Better luck next time!"
             elif p.bust is not True:
-                print("Congratulations {}, you've won {} chips!".format(p.name, p.bet*2))
+                MESSAGE = "Congratulations {}, you've won {} chips!".format(p.name, p.bet*2)
                 p.chips += p.bet*2
                 print(p.chips)
             if p.split is True:
                 if p.splitBust is True:
-                    display_text("Better Luck Next Time", 300, 220)
+                    MESSAGE = "Better luck next time!"
                 elif p.splitBust is not True:
-                    print("Congratulations {}, you've won {} chips!".format(p.name, p.bet*2))
+                    MESSAGE = "Congratulations {}, you've won {} chips!".format(p.name, p.bet*2)
                     p.chips += p.bet*2
                     print(p.chips)      
         elif p.bust is True:
             if p.chips == 0:
                 p.chips = 100
-            display_text("Better Luck Next Time", 300, 220)
+            MESSAGE = "Better luck next time!"
             if p.split is True:
                 if p.splitBust is True:
-                    display_text("Better Luck Next Time", 300, 220)
+                    MESSAGE = "Better luck next time!"
                 elif p.splitBust is not True:
                     if p.splitBet == players[0].score:
-                        print("Push! You have recieved {} chips.".format(p.bet))
+                        MESSAGE = "Push! You have recieved {} chips.".format(p.bet)
                         p.chips += p.bet
                         print(p.chips)
                     elif p.splitBet > players[0].score:
-                        print("Congratulations {}, you've won {} chips!".format(p.name, p.bet*2))
+                        MESSAGE = "Congratulations {}, you've won {} chips!".format(p.name, p.bet*2)
                         p.chips += p.bet*2
                         print(p.chips)
                     elif p.splitBet < players[0].score:
-                        display_text("Better Luck Next Time", 300, 220)
+                        MESSAGE = "Better luck next time!"
         elif p.splitBust is True:
             if p.score == players[0].score:
-                print("Push! You have recieved {} chips.".format(p.bet))
+                MESSAGE = "Push! You have recieved {} chips.".format(p.bet)
                 p.chips += p.bet
                 print(p.chips)
             elif p.score > players[0].score:
-                print("Congratulations {}, you've won {} chips!".format(p.name, p.bet*2))
+                MESSAGE = "Congratulations {}, you've won {} chips!".format(p.name, p.bet*2)
                 p.chips += p.bet*2
                 print(p.chips)
             elif p.score < players[0].score:
                 if p.chips == 0:
                     p.chips = 100
-                display_text("Better Luck Next Time", 300, 220)
-            display_text("Better Luck Next Time", 300, 220)
+                MESSAGE = "Better luck next time!"
+            MESSAGE = "Better luck next time!"
         else:
             if p.score == players[0].score:
-                print("Push! You have recieved {} chips.".format(p.bet))
+                MESSAGE = "Push! You have recieved {} chips.".format(p.bet)
                 p.chips += p.bet
                 print(p.chips)
             elif p.score > players[0].score:
-                print("Congratulations {}, you've won {} chips!".format(p.name, p.bet*2))
+                MESSAGE = "Congratulations {}, you've won {} chips!".format(p.name, p.bet*2)
                 p.chips += p.bet*2
                 print(p.chips)
             elif p.score < players[0].score:
                 if p.chips == 0:
                     p.chips = 100
-                display_text("Better Luck Next Time", 300, 220)
+                MESSAGE = "Better luck next time!"
             if p.split is True:
                 if p.splitScore == players[0].score:
-                    print("Push, you have recieved {} chips.".format(p.bet))
+                    MESSAGE = "Push, you have recieved {} chips.".format(p.bet)
                     p.chips += p.bet
                     print(p.chips)
                 elif p.splitScore > players[0].score:
-                    print("Congratulations {}, you've won {} chips!".format(p.name, p.bet*2))
+                    MESSAGE = "Congratulations {}, you've won {} chips!".format(p.name, p.bet*2)
                     p.chips += p.bet*2
                     print(p.chips)
                 elif p.splitScore < players[0].score:
                     if p.chips == 0:
                         p.chips = 100
-                    display_text("Better Luck Next Time", 300, 220)
+                    MESSAGE = "Better luck next time!"
 
 
 def win(player):
+    global MESSAGE
     if player.name == "dealer":
-        display_text("Better Luck Next Time", 300, 220)
+        MESSAGE = "Better luck next time!"
     elif player.score == players[0].score:
         if player.score == 21:
-            print("You hit Blackjack! You have recieved {} chips.".format(player.bet*1.5))
+            MESSAGE = "You hit Blackjack! You have recieved {} chips.".format(player.bet*1.5)
             player.chips += player.bet*1.5
             print(player.chips)
         else:
-            print("Push, you have recieved {} chips.".format(player.bet))
+            MESSAGE = "Push, you have recieved {} chips.".format(player.bet)
             player.chips += player.bet
             print(player.chips)
     else:
         if player.score == 21:
-            print("You hit Blackjack! You have recieved {} chips.".format(player.bet*1.5 + player.bet))
+            MESSAGE = "You hit Blackjack! You have recieved {} chips.".format(player.bet*1.5 + player.bet)
             player.chips += player.bet*1.5
             print(player.chips)
         else: 
-            print("Congratulations {}, you've won {} chips!".format(player.name, player.bet*2))
+            MESSAGE = "Congratulations {}, you've won {} chips!".format(player.name, player.bet*2)
             player.chips += player.bet*2
             print(player.chips)
 
@@ -508,6 +525,7 @@ pyg.display.set_caption('Blackjack')
 # set color values
 green = (34, 99, 43)
 white = (255, 255, 255)
+black = (0, 0, 0)
 
 # set font for pygame
 font = pyg.font.Font('freesansbold.ttf', 25)
