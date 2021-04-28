@@ -5,15 +5,20 @@ import pygame as pyg
 from random import choice
 import ObjClasses as obj
 import imgs
-##import RPi.GPIO as GPIO
 from time import sleep
 
-# Setup GPIO Blackjack Buttons
-# Setup the GPIO pins 
-##GPIO.setmode(GPIO.BCM)
-##GPIO.setup(18, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
-##GPIO.setup(19, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
-##GPIO.setup(20, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
+GPIO = False
+if GPIO:
+    import RPi.GPIO as GPIO
+    #Setup GPIO Blackjack Buttons
+    RESET = 18
+    HIT = 19
+    STAND = 20
+    # Setup the GPIO pins 
+    GPIO.setmode(GPIO.BCM)
+    GPIO.setup(RESET, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
+    GPIO.setup(HIT, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
+    GPIO.setup(STAND, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
 
 
 # defines function to display images (might be redundant whoops)
@@ -213,13 +218,14 @@ def split_button_check(mouse):
 def main(players):
     global END
     while not END:
-       # if GPIO.input(18) == GPIO.HIGH:
-       #     reset()
-       # if GPIO.input(19) == GPIO.HIGH:
-       #     hit()
-       #     sleep(0.5)
-       # elif GPIO.input(20) == GPIO.HIGH:
-       #     stand()
+        if GPIO:
+            if GPIO.input(RESET) == GPIO.HIGH:
+                reset()
+            if GPIO.input(HIT) == GPIO.HIGH:
+                hit()
+                sleep(0.5)
+            elif GPIO.input(STAND) == GPIO.HIGH:
+                stand()
 
         # get mouse x and y coordinates
         mouse = pyg.mouse.get_pos()
@@ -528,10 +534,10 @@ counter = 0
 
 # initialize objects
 objs = [
-    obj.Button(display_width * 0.9, display_height * 0.87, 'deal'),
-    obj.Button(display_width * 0.01, display_height * 0.86, 'hit'),
-    obj.Button(display_width * 0.12, display_height * 0.86, 'stand'),
-    obj.Button(display_width * 0.8, display_height * 0.86, 'split')
+    obj.Button(display_width * 0.9, display_height * 0.83, 'deal'),
+    obj.Button(display_width * 0.01, display_height * 0.83, 'hit'),
+    obj.Button(display_width * 0.12, display_height * 0.83, 'stand'),
+    obj.Button(display_width * 0.8, display_height * 0.83, 'split')
 ]
 
 # initialize players as a list
