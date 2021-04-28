@@ -296,15 +296,11 @@ def win_condition():
         if p.name == "dealer":
             continue
         if p.score == 21:
-            MESSAGE = "You hit Blackjack! You have recieved {} chips.".format(p.bet*1.5)
-            p.chips += int(p.bet*1.5 + p.bet)
+            MESSAGE = "You hit Blackjack! You have recieved {} chips.".format(p.bet*2.5)
+            p.chips += int(p.bet*2.5)
             print(p.chips)
-            continue
-        if p.split is True:
-            if p.splitScore == 21:
-                MESSAGE = "You hit Blackjack! You have recieved {} chips.".format(p.bet*1.5)
-                p.chips += p.bet*1.5
-                print(p.chips)
+            if p.split is False:
+                continue
         elif players[0].bust is True:
             if p.bust is True:
                 if p.chips == 0:
@@ -312,47 +308,8 @@ def win_condition():
                 MESSAGE = "Better luck next time!"
             elif p.bust is not True:
                 MESSAGE = "Congratulations {}, you've won {} chips!".format(p.name, p.bet*2)
-                p.chips += p.bet*2
+                p.chips += int(p.bet*2)
                 print(p.chips)
-            if p.split is True:
-                if p.splitBust is True:
-                    MESSAGE = "Better luck next time!"
-                elif p.splitBust is not True:
-                    MESSAGE = "Congratulations {}, you've won {} chips!".format(p.name, p.bet*2)
-                    p.chips += p.bet*2
-                    print(p.chips)      
-        elif p.bust is True:
-            if p.chips == 0:
-                p.chips = 100
-            MESSAGE = "Better luck next time!"
-            if p.split is True:
-                if p.splitBust is True:
-                    MESSAGE = "Better luck next time!"
-                elif p.splitBust is not True:
-                    if p.splitBet == players[0].score:
-                        MESSAGE = "Push! You have recieved {} chips.".format(p.bet)
-                        p.chips += p.bet
-                        print(p.chips)
-                    elif p.splitBet > players[0].score:
-                        MESSAGE = "Congratulations {}, you've won {} chips!".format(p.name, p.bet*2)
-                        p.chips += p.bet*2
-                        print(p.chips)
-                    elif p.splitBet < players[0].score:
-                        MESSAGE = "Better luck next time!"
-        elif p.splitBust is True:
-            if p.score == players[0].score:
-                MESSAGE = "Push! You have recieved {} chips.".format(p.bet)
-                p.chips += p.bet
-                print(p.chips)
-            elif p.score > players[0].score:
-                MESSAGE = "Congratulations {}, you've won {} chips!".format(p.name, p.bet*2)
-                p.chips += p.bet*2
-                print(p.chips)
-            elif p.score < players[0].score:
-                if p.chips == 0:
-                    p.chips = 100
-                MESSAGE = "Better luck next time!"
-            MESSAGE = "Better luck next time!"
         else:
             if p.score == players[0].score:
                 MESSAGE = "Push! You have recieved {} chips.".format(p.bet)
@@ -360,26 +317,42 @@ def win_condition():
                 print(p.chips)
             elif p.score > players[0].score:
                 MESSAGE = "Congratulations {}, you've won {} chips!".format(p.name, p.bet*2)
-                p.chips += p.bet*2
+                p.chips += int(p.bet*2)
                 print(p.chips)
             elif p.score < players[0].score:
                 if p.chips == 0:
                     p.chips = 100
                 MESSAGE = "Better luck next time!"
-            if p.split is True:
-                if p.splitScore == players[0].score:
-                    MESSAGE = "Push, you have recieved {} chips.".format(p.bet)
-                    p.chips += p.bet
-                    print(p.chips)
-                elif p.splitScore > players[0].score:
-                    MESSAGE = "Congratulations {}, you've won {} chips!".format(p.name, p.bet*2)
-                    p.chips += p.bet*2
-                    print(p.chips)
-                elif p.splitScore < players[0].score:
+                
+        if p.split is True:
+            if p.splitScore == 21:
+                MESSAGE = "You hit Blackjack! You have recieved {} chips.".format(p.bet*2.5)
+                p.chips += int(p.bet*2.5)
+                print(p.chips)
+                continue
+            elif players[0].bust is True:
+                if p.splitbust is True:
                     if p.chips == 0:
                         p.chips = 100
                     MESSAGE = "Better luck next time!"
-
+                elif p.splitbust is not True:
+                    MESSAGE = "Congratulations {}, you've won {} chips!".format(p.name, p.bet*2)
+                    p.chips += int(p.bet*2)
+                    print(p.chips)
+            else:
+                if p.splitscore == players[0].score:
+                    MESSAGE = "Push! You have recieved {} chips.".format(p.bet)
+                    p.chips += p.bet
+                    print(p.chips)
+                elif p.splitscore > players[0].score:
+                    MESSAGE = "Congratulations {}, you've won {} chips!".format(p.name, p.splitbet*2)
+                    p.chips += int(p.bet*2)
+                    print(p.chips)
+                elif p.score < players[0].score:
+                    if p.chips == 0:
+                        p.chips = 100
+                    MESSAGE = "Better luck next time!"
+                    
 
 def win(player):
     global MESSAGE
