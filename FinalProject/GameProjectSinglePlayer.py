@@ -487,19 +487,19 @@ def bet(player):
         if GPIO:
             if GPIO.input(UP_ARROW) == GPIO.HIGH:
                 sleep(0.250)
-                if p.bet_value == 5:
-                    p.bet_value = 0
+                if player.bet_value == 5:
+                    player.bet_value = 0
                 else:
-                    p.bet_value += 1
-                p.bet = bets[p.bet_value]
+                    player.bet_value += 1
+                player.bet = bets[player.bet_value]
                 print("Increase")
             elif GPIO.input(DOWN_ARROW) == GPIO.HIGH:
                 sleep(0.250)
-                if p.bet_value == 0:
-                    p.bet_value = 5
+                if player.bet_value == 0:
+                    player.bet_value = 5
                 else:
-                    p.bet_value -= 1
-                p.bet = bets[p.bet_value]
+                    player.bet_value -= 1
+                player.bet = bets[player.bet_value]
                 print("Decrease")
             elif GPIO.input(CONFIRM) == GPIO.HIGH:
                 player.chips -= player.bet
@@ -511,7 +511,7 @@ def bet(player):
                 increase_bet_check(mouse, player)
                 decrease_bet_check(mouse, player)
                 player.bets_placed = set_bet_check(mouse, player)
-
+        
         setup(players)
 
         pyg.display.update()
