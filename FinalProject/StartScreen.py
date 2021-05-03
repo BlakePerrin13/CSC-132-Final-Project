@@ -75,7 +75,6 @@ def main():
             pyg.draw.rect(startScreen, (255,255,255), (320, 263, 167, 50), 2) # multiplayer tab
             pyg.draw.rect(startScreen, (255,255,255), (310, 162, 185, 50), 2) # cheats tab
 
-            
         elif mode == 2:
             pyg.draw.rect(startScreen, (0, 0, 255), (320, 263, 167, 50), 2)   # multiplayer tab
             pyg.draw.rect(startScreen, (255,255,255), (342, 363, 125, 50), 2) # singleplayer tab

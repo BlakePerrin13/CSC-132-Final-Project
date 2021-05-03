@@ -10,7 +10,7 @@ from time import sleep
 GPIO = False
 if GPIO:
     import RPi.GPIO as GPIO
-    #Setup GPIO Blackjack Buttons
+    # Setup GPIO Blackjack Buttons
     RESET = 18
     HIT = 19
     STAND = 20
@@ -25,7 +25,8 @@ if GPIO:
     GPIO.setup(UP_ARROW, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
     GPIO.setup(DOWN_ARROW, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
     GPIO.setup(CONFIRM, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
-    
+
+
 # defines function to display images (might be redundant whoops)
 def display_img(img, x, y):
     gameDisplay.blit(img, (x, y))
@@ -234,7 +235,6 @@ def split_button_check(mouse):
         split(players[1])
 
 
-# TODO ##########################################################################################
 def increase_bet_check(mouse, p):
     if (display_width * 0.8) <= mouse[0] <= ((display_width * 0.8) + 77) and (display_height * 0.76) <= mouse[1] <= \
             ((display_height * 0.76) + 77):
@@ -305,7 +305,6 @@ def main(players):
 
 
 # initialize players and deal first cards
-# TODO: later add way to generate a new player for every player in num_players
 def initialization(players):
     global MESSAGE
     MESSAGE = ""
@@ -334,7 +333,6 @@ def initialization(players):
     deal_card(players[0])
 
 
-# TODO ######################################################################################################
 def bust_check(player):
     if player.score > 21:
         player.bust = True
@@ -366,7 +364,7 @@ def win_condition():
                 p.chips += int(p.bet*2)
                 print(p.chips)
         else:
-            if p.bust != True:
+            if p.bust is not True:
                 if p.score == players[0].score:
                     MESSAGE = "Push! You have recieved {} chips.".format(int(p.bet))
                     p.chips += p.bet
@@ -379,12 +377,11 @@ def win_condition():
                     if p.chips == 0:
                         p.chips = 100
                     MESSAGE = "Better luck next time!"
-            elif p.bust == True:
+            elif p.bust is True:
                 if p.chips == 0:
                     p.chips = 100
                 MESSAGE = "Better luck next time!"
-                
-                
+
         if p.split is True:
             if p.splitScore == 21:
                 MESSAGE = "You hit Blackjack! You have recieved {} chips.".format(int(p.bet*2.5))
@@ -401,7 +398,7 @@ def win_condition():
                     p.chips += int(p.bet*2)
                     print(p.chips)
             else:
-                if p.splitBust != True:
+                if p.splitBust is not True:
                     if p.splitScore == players[0].score:
                         MESSAGE = "Push! You have recieved {} chips.".format(int(p.bet))
                         p.chips += p.bet
@@ -414,7 +411,7 @@ def win_condition():
                         if p.chips == 0:
                             p.chips = 100
                         MESSAGE = "Better luck next time!"
-                elif p.splitBust == True:
+                elif p.splitBust is True:
                     if p.chips == 0:
                         p.chips = 100
                     MESSAGE = "Better luck next time!"
@@ -488,7 +485,6 @@ def finalStand():
         win_condition()
 
 
-# TODO ##########################################################################################
 def bet(player):
     global MESSAGE
     player.bet_value = 0
@@ -531,15 +527,6 @@ def bet(player):
         clock.tick(30)
 
     MESSAGE = ""
-
-
-def check_user_input(input):
-    try:
-        # convert input to integer
-        val = int(input)
-        return "int"
-    except ValueError:
-        return "other"
 
 
 def split(player):
