@@ -61,17 +61,24 @@ def deal_card(player):
         pass
     # checks if this is first card and who is receiving it (first cards have a specific x,y pair to use)
     elif len(player.cards) == 0 and player.name == "player1":
-        player.cards.append(obj.Card(card1_x, card1_y, imgs.card_names[rand_index], card_value(imgs.card_names[rand_index], player), rand_index))
+        player.cards.append(obj.Card(card1_x, card1_y, imgs.card_names[rand_index],
+                                     card_value(imgs.card_names[rand_index], player), rand_index))
     elif len(player.cards) == 0 and player.name == "dealer":
-        player.cards.append(obj.Card(card2_x, card2_y, imgs.card_names[rand_index], card_value(imgs.card_names[rand_index], player), rand_index))
+        player.cards.append(obj.Card(card2_x, card2_y, imgs.card_names[rand_index],
+                                     card_value(imgs.card_names[rand_index], player), rand_index))
     elif len(player.cards) == 1 and player.name == "dealer":
-        player.cards.append(obj.Card((player.cards[len(player.cards) - 1].x + 40), (player.cards[len(player.cards) - 1].y - 20), "purple_back", 0, 52))
+        player.cards.append(obj.Card((player.cards[len(player.cards) - 1].x + 40),
+                                     (player.cards[len(player.cards) - 1].y - 20), "purple_back", 0, 52))
     elif len(player.cards) == 2 and player.name == "dealer" and player.cards[1].name == "purple_back":
         player.cards.remove(player.cards[1])
-        player.cards.append(obj.Card((player.cards[len(player.cards) - 1].x + 40), (player.cards[len(player.cards) - 1].y - 20), imgs.card_names[rand_index], card_value(imgs.card_names[rand_index], player), rand_index))
+        player.cards.append(obj.Card((player.cards[len(player.cards) - 1].x + 40),
+                                     (player.cards[len(player.cards) - 1].y - 20), imgs.card_names[rand_index],
+                                     card_value(imgs.card_names[rand_index], player), rand_index))
     # if not first card, just add it on top of last placed card
     else:
-        player.cards.append(obj.Card((player.cards[len(player.cards) - 1].x + 40), (player.cards[len(player.cards) - 1].y - 20), imgs.card_names[rand_index], card_value(imgs.card_names[rand_index], player), rand_index))
+        player.cards.append(obj.Card((player.cards[len(player.cards) - 1].x + 40),
+                                     (player.cards[len(player.cards) - 1].y - 20), imgs.card_names[rand_index],
+                                     card_value(imgs.card_names[rand_index], player), rand_index))
     # print statement to debug dealing (not seen by player)
     print("Card dealt to {}! (if not busted)".format(player.name))
 
@@ -82,7 +89,10 @@ def split_deal(player):
     if player.splitBust is True:
         pass
     else:
-        player.splitCards.append(obj.Card((player.splitCards[len(player.splitCards) - 1].x + 40), (player.splitCards[len(player.splitCards) - 1].y - 20), imgs.card_names[rand_index], card_value(imgs.card_names[rand_index], player), rand_index))
+        player.splitCards.append(obj.Card((player.splitCards[len(player.splitCards) - 1].x + 40),
+                                          (player.splitCards[len(player.splitCards) - 1].y - 20),
+                                          imgs.card_names[rand_index], card_value(imgs.card_names[rand_index],
+                                                                                  player), rand_index))
     # print statement to debug dealing (not seen by player)
     print("Card dealt to {} Split Hand! (if not busted)".format(player.name))
 
@@ -163,9 +173,10 @@ def setup(players):
     if players[1].split is True:
         display_text('Hand 2 Total: {}'.format(players[1].splitScore), 20, 100)
         display_text('Hand 1 Total: {}'.format(players[1].score), 20, 60)
+    display_text('Bet: {}'.format(players[1].bet), 600, 60)
     display_text('Dealer Total: {}'.format(players[0].score), 20, 20)
     display_text('Chips: {}'.format(players[1].chips), 600, 20)
-    display_text('Bet: {}'.format(players[1].bet), 600, 60)
+    print_text(MESSAGE)
 
 
 # define reset function
@@ -194,24 +205,59 @@ def reset():
 
 # button check functions:
 def deal_button_check(mouse):
-    if (display_width * 0.9) <= mouse[0] <= ((display_width * 0.9) + 70) and (display_height * 0.87) <= mouse[1] <= ((display_height * 0.87) + 70):
+    if (display_width * 0.9) <= mouse[0] <= ((display_width * 0.9) + 70) and (display_height * 0.87) <= mouse[1] <= \
+            ((display_height * 0.87) + 70):
         reset()
 
 
 def hit_button_check(mouse):
-    if (display_width * 0.01) <= mouse[0] <= ((display_width * 0.01) + 77) and (display_height * 0.86) <= mouse[1] <= ((display_height * 0.86) + 77):
+    if (display_width * 0.01) <= mouse[0] <= ((display_width * 0.01) + 77) and (display_height * 0.86) <= mouse[1] <= \
+            ((display_height * 0.86) + 77):
         hit(players[1])
 
 
 def stand_button_check(mouse):
-    if (display_width * 0.12) <= mouse[0] <= ((display_width * 0.12) + 77) and (display_height * 0.86) <= mouse[1] <= ((display_height * 0.86) + 77):
+    if (display_width * 0.12) <= mouse[0] <= ((display_width * 0.12) + 77) and (display_height * 0.86) <= mouse[1] <= \
+            ((display_height * 0.86) + 77):
         # While dealers score is less than 18, dealer will keep hitting
         stand(players[1])
 
 
 def split_button_check(mouse):
-    if (display_width * 0.8) <= mouse[0] <= ((display_width * 0.8) + 77) and (display_height * 0.86) <= mouse[1] <= ((display_height * 0.86) + 77):
+    if (display_width * 0.8) <= mouse[0] <= ((display_width * 0.8) + 77) and (display_height * 0.86) <= mouse[1] <= \
+            ((display_height * 0.86) + 77):
         split(players[1])
+
+
+# TODO ##########################################################################################
+def increase_bet_check(mouse, p):
+    if (display_width * 0.8) <= mouse[0] <= ((display_width * 0.8) + 77) and (display_height * 0.76) <= mouse[1] <= \
+            ((display_height * 0.76) + 77):
+        if p.bet_value == 5:
+            p.bet_value = 0
+        else:
+            p.bet_value += 1
+        p.bet = bets[p.bet_value]
+        print("Increase")
+
+
+def decrease_bet_check(mouse, p):
+    if (display_width * 0.9) <= mouse[0] <= ((display_width * 0.9) + 77) and (display_height * 0.76) <= mouse[1] <= \
+            ((display_height * 0.76) + 77):
+        if p.bet_value == 0:
+            p.bet_value = 5
+        else:
+            p.bet_value -= 1
+        p.bet = bets[p.bet_value]
+        print("Decrease")
+
+
+def set_bet_check(mouse, player):
+    if (display_width * 0.01) <= mouse[0] <= ((display_width * 0.01) + 77) and (display_height * 0.76) <= mouse[1] <= \
+            ((display_height * 0.76) + 77):
+        player.chips -= player.bet
+        print("Bets placed")
+        return True
 
 
 # begin main game loop ############################################################################################
@@ -222,10 +268,10 @@ def main(players):
             if GPIO.input(RESET) == GPIO.HIGH:
                 reset()
             if GPIO.input(HIT) == GPIO.HIGH:
-                hit()
+                hit(players[1])
                 sleep(0.5)
             elif GPIO.input(STAND) == GPIO.HIGH:
-                stand()
+                stand(players[1])
 
         # get mouse x and y coordinates
         mouse = pyg.mouse.get_pos()
@@ -247,9 +293,6 @@ def main(players):
 
         # call our setup function
         setup(players)
-
-        # print current message to display
-        print_text(MESSAGE)
 
         # update display
         pyg.display.update()
@@ -286,6 +329,7 @@ def initialization(players):
     deal_card(players[0])
 
 
+# TODO ######################################################################################################
 def bust_check(player):
     if player.score > 21:
         player.bust = True
@@ -337,21 +381,21 @@ def win_condition():
                 print(p.chips)
                 continue
             elif players[0].bust is True:
-                if p.splitbust is True:
+                if p.splitBust is True:
                     if p.chips == 0:
                         p.chips = 100
                     MESSAGE = "Better luck next time!"
-                elif p.splitbust is not True:
+                elif p.splitBust is not True:
                     MESSAGE = "Congratulations {}, you've won {} chips!".format(p.name, p.bet*2)
                     p.chips += int(p.bet*2)
                     print(p.chips)
             else:
-                if p.splitscore == players[0].score:
+                if p.splitScore == players[0].score:
                     MESSAGE = "Push! You have recieved {} chips.".format(p.bet)
                     p.chips += p.bet
                     print(p.chips)
-                elif p.splitscore > players[0].score:
-                    MESSAGE = "Congratulations {}, you've won {} chips!".format(p.name, p.splitbet*2)
+                elif p.splitScore > players[0].score:
+                    MESSAGE = "Congratulations {}, you've won {} chips!".format(p.name, p.splitBet*2)
                     p.chips += int(p.bet*2)
                     print(p.chips)
                 elif p.score < players[0].score:
@@ -428,26 +472,26 @@ def finalStand():
         win_condition()
 
 
+# TODO ##########################################################################################
 def bet(player):
-    amount = input("How much would you like to bet. (Must be Less than or Equal to {}): ".format(player.chips))
-    dataType = check_user_input(amount)
-    if dataType == "int":
-        amount = int(amount)
-        if amount < 0:
-            print("Invalid bet. Bet must be a positive whole number")
-            bet(player)
-        elif amount < player.chips:
-            player.chips -= amount
-            player.bet = amount
-        elif amount == player.chips:
-            player.chips = 0
-            player.bet = amount
-        elif amount > player.chips:
-            print("Invalid bet. Must be Less than or Equal to {}".format(player.chips))
-            bet(player)
-    else:
-        print("Invalid bet. Bet must be a positive whole number")
-        bet(player)
+    global MESSAGE
+    player.bet_value = 0
+    player.bets_placed = False
+    while not player.bets_placed:
+        mouse = pyg.mouse.get_pos()
+        MESSAGE = "Use buttons to place your bets."
+        for event in pyg.event.get():
+            if event.type == pyg.MOUSEBUTTONDOWN:
+                increase_bet_check(mouse, player)
+                decrease_bet_check(mouse, player)
+                player.bets_placed = set_bet_check(mouse, player)
+
+        setup(players)
+
+        pyg.display.update()
+        clock.tick(30)
+
+    MESSAGE = ""
 
 
 def check_user_input(input):
@@ -463,7 +507,8 @@ def split(player):
     global counter
     if len(player.cards) < 2:
         pass
-    elif player.cards[0].name[0] == player.cards[1].name[0] and len(player.cards) == 2 and player.chips - player.bet >= 0:
+    elif player.cards[0].name[0] == player.cards[1].name[0] and len(player.cards) == 2 and \
+            player.chips - player.bet >= 0:
         player.split = True
         counter = 1
         player.chips -= player.bet
@@ -527,6 +572,9 @@ card2_y = (display_height * 0.1)
 # create list for used cards and counters for cards dealt to player/dealer
 used_cards = []
 
+# bet values list
+bets = [25, 50, 100, 500, 750, 1000]
+
 # keep track of number of players (total players adds dealer)
 num_players = 1
 total_players = num_players + 1
@@ -544,7 +592,8 @@ objs = [
 players = [
         obj.Player("dealer", [], 0, 0, 0, 0),
         obj.Player("player1", [], 0, 0, 1000, 0)
-    ]
+]
+
 initialization(players)
 main(players)
 # GPIO.cleanup()
