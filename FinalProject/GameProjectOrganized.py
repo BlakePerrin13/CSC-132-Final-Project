@@ -566,7 +566,7 @@ pyg.init()
 
 # set display dimensions
 display_width = 800
-display_height = 480
+display_height = 450
 
 # initiate display and caption
 gameDisplay = pyg.display.set_mode((display_width, display_height))
@@ -588,12 +588,12 @@ END = False
 card_offset = 40
 
 # set x and y for first card dealt to player
-card1_x = (display_width * 0.35)
-card1_y = (display_height * 0.56)
+card1_x = (display_width * 0.38)
+card1_y = (display_height * 0.61)
 
 # set x and y for first card dealt to dealer
-card2_x = (display_width * 0.35)
-card2_y = (display_height * 0.1)
+card2_x = (display_width * 0.38)
+card2_y = (display_height * 0.15)
 
 # create list for used cards and counters for cards dealt to player/dealer
 used_cards = []
@@ -608,10 +608,10 @@ counter = 0
 
 # initialize objects
 objs = [
-    obj.Button(display_width * 0.9, display_height * 0.83, 'deal'),
-    obj.Button(display_width * 0.01, display_height * 0.83, 'hit'),
-    obj.Button(display_width * 0.12, display_height * 0.83, 'stand'),
-    obj.Button(display_width * 0.8, display_height * 0.83, 'split')
+    obj.Button(display_width * 0.9, display_height * 0.82, 'deal'),
+    obj.Button(display_width * 0.01, display_height * 0.82, 'hit'),
+    obj.Button(display_width * 0.12, display_height * 0.82, 'stand'),
+    obj.Button(display_width * 0.8, display_height * 0.82, 'split')
 ]
 
 # initialize players as a list
@@ -622,6 +622,7 @@ players = [
 
 initialization(players)
 main(players)
-# GPIO.cleanup()
+if GPIO:
+    GPIO.cleanup()
 pyg.quit()
 quit()

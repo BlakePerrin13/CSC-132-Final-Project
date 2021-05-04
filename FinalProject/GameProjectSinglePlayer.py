@@ -1,4 +1,4 @@
-# main game plays here
+# Single Player game plays here
 
 # import pygame and image files
 import pygame as pyg
@@ -64,7 +64,7 @@ def deal_card(player):
     # generates random card number
     if BLACKJACK_CHEAT == False or len(player.cards) < 2 or player.name == "dealer":
         rand_index = random_card()
-    elif BLACKJACK_CHEAT == True and player.name == "player1" and len(player.cards) > 1 :
+    elif BLACKJACK_CHEAT == True and player.name[0] == "P" and len(player.cards) > 1 :
         needed_card = 21 - player.score
         if needed_card > 10:
             needed_card = 10
@@ -76,7 +76,7 @@ def deal_card(player):
     if player.bust is True:
         pass
     # checks if this is first card and who is receiving it (first cards have a specific x,y pair to use)
-    elif len(player.cards) == 0 and player.name == "player1":
+    elif len(player.cards) == 0 and player.name[0] == "P":
         player.cards.append(obj.Card(card1_x, card1_y, imgs.card_names[rand_index], card_value(imgs.card_names[rand_index], player), rand_index))
     elif len(player.cards) == 0 and player.name == "dealer":
         player.cards.append(obj.Card(card2_x, card2_y, imgs.card_names[rand_index], card_value(imgs.card_names[rand_index], player), rand_index))
@@ -93,7 +93,16 @@ def deal_card(player):
 
 
 def split_deal(player):
-    rand_index = random_card()
+    if BLACKJACK_CHEAT == False or len(player.splitCards) < 2 or player.name == "dealer":
+        rand_index = random_card()
+    elif BLACKJACK_CHEAT == True and player.name[0] == "P" and len(player.splitCards) > 1 :
+        needed_card = 21 - player.splitScore
+        if needed_card > 10:
+            needed_card = 10
+        for i in range(len(imgs.card_names) - 1):
+            if card_value(imgs.card_names[i], player) == needed_card and i not in used_cards:
+                card = i
+        rand_index = card 
     # check if player is busted, if so don't deal them
     if player.splitBust is True:
         pass
@@ -493,7 +502,7 @@ def bet(player):
     player.bets_placed = False
     while not player.bets_placed:
         mouse = pyg.mouse.get_pos()
-        MESSAGE = "Use buttons to place your bets."
+        MESSAGE = "Use buttons to place your bet."
 
         if GPIO:
             if GPIO.input(UP_ARROW) == GPIO.HIGH:
@@ -598,12 +607,12 @@ END = False
 card_offset = 40
 
 # set x and y for first card dealt to player
-card1_x = (display_width * 0.35)
-card1_y = (display_height * 0.56)
+card1_x = (display_width * 0.38)
+card1_y = (display_height * 0.61)
 
 # set x and y for first card dealt to dealer
-card2_x = (display_width * 0.35)
-card2_y = (display_height * 0.1)
+card2_x = (display_width * 0.38)
+card2_y = (display_height * 0.15)
 
 # create list for used cards and counters for cards dealt to player/dealer
 used_cards = []
@@ -619,16 +628,16 @@ BLACKJACK_CHEAT = True
 
 # initialize objects
 objs = [
-    obj.Button(display_width * 0.9, display_height * 0.83, 'deal'),
-    obj.Button(display_width * 0.01, display_height * 0.83, 'hit'),
-    obj.Button(display_width * 0.12, display_height * 0.83, 'stand'),
-    obj.Button(display_width * 0.8, display_height * 0.83, 'split')
+    obj.Button(display_width * 0.9, display_height * 0.82, 'deal'),
+    obj.Button(display_width * 0.01, display_height * 0.82, 'hit'),
+    obj.Button(display_width * 0.12, display_height * 0.82, 'stand'),
+    obj.Button(display_width * 0.8, display_height * 0.82, 'split')
 ]
 
 # initialize players as a list
 players = [
         obj.Player("dealer", [], 0, 0, 0, 0),
-        obj.Player("player1", [], 0, 0, 1000, 0)
+        obj.Player("Player 1", [], 0, 0, 1000, 0)
     ]
 initialization(players)
 main(players)
