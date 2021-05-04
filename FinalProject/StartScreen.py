@@ -1,7 +1,8 @@
 import pygame as pyg
 from time import sleep
+import importlib
 
-GPIO = True
+GPIO = False
 
 if GPIO:
     import RPi.GPIO as GPIO
@@ -12,21 +13,6 @@ if GPIO:
     GPIO.setup(UP_ARROW, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
     GPIO.setup(DOWN_ARROW, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
     GPIO.setup(CONFIRM, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
-
-    
-
-
-def single_player():
-    import GameProjectSinglePlayer
-    
-def multiplayer():
-    import GameProjectOrganized
-
-def cheats():
-    pass
-
-def settings():
-    pass
 
 def display_text(text, x, y):
     startScreen.blit(font.render(text, True, white), (x, y))
@@ -40,24 +26,35 @@ def setup():
     display_text('SinglePlayer', 325, 175)
     display_text('Multiplayer', 335, 275)
     display_text('Cheats', 360, 375)
-    pyg.draw.rect(startScreen, (255,255,255), (342, 363, 125, 50), 2)
-    pyg.draw.rect(startScreen, (255,255,255), (320, 263, 167, 50), 2)
-    pyg.draw.rect(startScreen, (255,255,255), (310, 162, 185, 50), 2)
+    pyg.draw.rect(startScreen, CHEATS_Color, (342, 363, 125, 50), 2)
+    pyg.draw.rect(startScreen, MP_Color, (320, 263, 167, 50), 2)
+    pyg.draw.rect(startScreen, SP_Color, (310, 162, 185, 50), 2)
     
 
 def main():
 
+    global imported
     global mode
+    global white
+    global blue
+    global SP_Color
+    global MP_Color
+    global CHEATS_Color
     global END
     while not END:
         if GPIO:
             if GPIO.input(CONFIRM) == GPIO.HIGH:
+                sleep(0.250)
                 if mode == 1:
                     import GameProjectSinglePlayer
                 elif mode == 2:
                     import GameProjectOrganized
                 elif mode == 3:
-                    pass
+                    if imported == True:
+                        importlib.reload(Cheats)
+                    elif imported == False:
+                        imported = True
+                        import Cheats
                     
             if GPIO.input(UP_ARROW) == GPIO.HIGH:
                 sleep(0.250)
@@ -69,25 +66,24 @@ def main():
                 mode += 1
                 if mode == 4:
                     mode = 1
-
-        if mode == 3:
-            pyg.draw.rect(startScreen, (0, 0, 255), (342, 363, 125, 50), 2)   # singleplayer tab
-            pyg.draw.rect(startScreen, (255,255,255), (320, 263, 167, 50), 2) # multiplayer tab
-            pyg.draw.rect(startScreen, (255,255,255), (310, 162, 185, 50), 2) # cheats tab
-
-        elif mode == 2:
-            pyg.draw.rect(startScreen, (0, 0, 255), (320, 263, 167, 50), 2)   # multiplayer tab
-            pyg.draw.rect(startScreen, (255,255,255), (342, 363, 125, 50), 2) # singleplayer tab
-            pyg.draw.rect(startScreen, (255,255,255), (310, 162, 185, 50), 2) # cheats tab
+        if GPIO:
+            if mode == 3:
+                SP_Color = white
+                MP_Color = white
+                CHEATS_Color = blue
             
-        elif mode == 1:
-            pyg.draw.rect(startScreen, (0, 0, 255), (310, 162, 185, 50), 2)    # cheats tab
-            pyg.draw.rect(startScreen, (255,255,255), (342, 363, 125, 50), 2)  # singleplayer tab
-            pyg.draw.rect(startScreen, (255,255,255), (320, 263, 167, 50), 2)  # multiplayer tab
+            elif mode == 2:
+                SP_Color = white
+                MP_Color = blue
+                CHEATS_Color = white
+            
+            elif mode == 1:
+                SP_Color = blue
+                MP_Color = white
+                CHEATS_Color = white
                 
         pyg.display.update()
 
-        print(mode)
         # get mouse x and y coordinates
         mouse = pyg.mouse.get_pos()
 
@@ -104,7 +100,12 @@ def main():
                     import GameProjectOrganized
 
                 if (360) <= mouse[0] <= (360 + 100) and (375) <= mouse[1] <= (375 + 25):
-                    pass
+                    if imported == True:
+                        importlib.reload(Cheats)
+                    elif imported == False:
+                        imported = True
+                        import Cheats
+                    
  
 
         # call our setup function
@@ -128,6 +129,10 @@ pyg.display.set_caption("Py-Jack")
 green = (34, 99, 43)
 white = (255, 255, 255)
 black = (0, 0, 0)
+blue = (0, 0, 255)
+SP_Color = white
+MP_Color = white
+CHEATS_Color = white
 
 # set font for pygame
 font = pyg.font.Font('freesansbold.ttf', 25)
@@ -136,6 +141,7 @@ font = pyg.font.Font('freesansbold.ttf', 25)
 clock = pyg.time.Clock()
 END = False
 mode = 1
+imported = False
 
 main()
 pyg.quit()
