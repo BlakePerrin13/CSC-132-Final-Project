@@ -236,8 +236,8 @@ def split_button_check(mouse):
 
 
 def increase_bet_check(mouse, p):
-    if (display_width * 0.8) <= mouse[0] <= ((display_width * 0.8) + 77) and (display_height * 0.76) <= mouse[1] <= \
-            ((display_height * 0.76) + 77):
+    if (display_width * 0.8) <= mouse[0] <= ((display_width * 0.8) + 77) and (display_height * 0.64) <= mouse[1] <= \
+            ((display_height * 0.64) + 77):
         if p.bet_value == 5:
             p.bet_value = 0
         else:
@@ -247,8 +247,8 @@ def increase_bet_check(mouse, p):
 
 
 def decrease_bet_check(mouse, p):
-    if (display_width * 0.9) <= mouse[0] <= ((display_width * 0.9) + 77) and (display_height * 0.76) <= mouse[1] <= \
-            ((display_height * 0.76) + 77):
+    if (display_width * 0.9) <= mouse[0] <= ((display_width * 0.9) + 77) and (display_height * 0.64) <= mouse[1] <= \
+            ((display_height * 0.64) + 77):
         if p.bet_value == 0:
             p.bet_value = 5
         else:
@@ -258,8 +258,8 @@ def decrease_bet_check(mouse, p):
 
 
 def set_bet_check(mouse, player):
-    if (display_width * 0.01) <= mouse[0] <= ((display_width * 0.01) + 77) and (display_height * 0.76) <= mouse[1] <= \
-            ((display_height * 0.76) + 77):
+    if (display_width * 0.01) <= mouse[0] <= ((display_width * 0.01) + 77) and (display_height * 0.64) <= mouse[1] <= \
+            ((display_height * 0.64) + 77):
         player.chips -= player.bet
         print("Bets placed")
         return True
@@ -404,7 +404,7 @@ def win_condition():
                         p.chips += p.bet
                         print(p.chips)
                     elif p.splitScore > players[0].score:
-                        MESSAGE = "Congratulations {}, you've won {} chips!".format(p.name, int(p.splitbet*2))
+                        MESSAGE = "Congratulations {}, you've won {} chips!".format(p.name, int(p.splitBet*2))
                         p.chips += int(p.bet*2)
                         print(p.chips)
                     elif p.splitScore < players[0].score:
@@ -611,7 +611,10 @@ objs = [
     obj.Button(display_width * 0.9, display_height * 0.82, 'deal'),
     obj.Button(display_width * 0.01, display_height * 0.82, 'hit'),
     obj.Button(display_width * 0.12, display_height * 0.82, 'stand'),
-    obj.Button(display_width * 0.8, display_height * 0.82, 'split')
+    obj.Button(display_width * 0.8, display_height * 0.82, 'split'),
+    obj.Button(display_width * 0.8, display_height * 0.64, 'raise_bet'),
+    obj.Button(display_width * 0.9, display_height * 0.64, 'lower_bet'),
+    obj.Button(display_width * 0.01, display_height * 0.64, 'set_bet')
 ]
 
 # initialize players as a list
