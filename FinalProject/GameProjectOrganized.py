@@ -7,16 +7,16 @@ import ObjClasses as obj
 import imgs
 from time import sleep
 
-GPIO = False
+GPIO = True
 if GPIO:
     import RPi.GPIO as GPIO
     # Setup GPIO Blackjack Buttons
-    RESET = 18
-    HIT = 19
-    STAND = 20
-    UP_ARROW = 12
-    DOWN_ARROW = 6
-    CONFIRM = 5
+    RESET = 6
+    HIT = 17
+    STAND = 16
+    UP_ARROW = 19
+    DOWN_ARROW = 18
+    CONFIRM = 4
     # Setup the GPIO pins 
     GPIO.setmode(GPIO.BCM)
     GPIO.setup(RESET, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
