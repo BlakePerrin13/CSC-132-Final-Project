@@ -627,7 +627,7 @@ objs = [
 # initialize players as a list
 players = [
         obj.Player("dealer", [], 0, 0, 0, 0),
-        obj.Player("player1", [], 0, 0, 1000, 0)
+        obj.Player("player1", [], 0, 0, 1000, 25)
 ]
 
 initialization(players)
