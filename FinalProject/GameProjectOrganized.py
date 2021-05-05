@@ -7,7 +7,7 @@ import ObjClasses as obj
 import imgs
 from time import sleep
 
-GPIO = True
+GPIO = False
 if GPIO:
     import RPi.GPIO as GPIO
     # Setup GPIO Blackjack Buttons
@@ -238,22 +238,32 @@ def split_button_check(mouse):
 def increase_bet_check(mouse, p):
     if (display_width * 0.8) <= mouse[0] <= ((display_width * 0.8) + 77) and (display_height * 0.64) <= mouse[1] <= \
             ((display_height * 0.64) + 77):
-        if p.bet_value == 5:
+        bets = [25, 50, 100, 500, 750, 1000, p.chips]
+        if p.bet_value == 6:
             p.bet_value = 0
         else:
             p.bet_value += 1
-        p.bet = bets[p.bet_value]
+
+        if p.chips < bets[p.bet_value]:
+            p.bet = p.chips
+        else:
+            p.bet = bets[p.bet_value]
         print("Increase")
 
 
 def decrease_bet_check(mouse, p):
     if (display_width * 0.9) <= mouse[0] <= ((display_width * 0.9) + 77) and (display_height * 0.64) <= mouse[1] <= \
             ((display_height * 0.64) + 77):
+        bets = [25, 50, 100, 500, 750, 1000, p.chips]
         if p.bet_value == 0:
-            p.bet_value = 5
+            p.bet_value = 6
         else:
             p.bet_value -= 1
-        p.bet = bets[p.bet_value]
+
+        if p.chips < bets[p.bet_value]:
+            p.bet = p.chips
+        else:
+            p.bet = bets[p.bet_value]
         print("Decrease")
 
 
@@ -356,7 +366,7 @@ def win_condition():
                 continue
         elif players[0].bust is True:
             if p.bust is True:
-                if p.chips == 0:
+                if p.chips <= 0:
                     p.chips = 100
                 MESSAGE = "Better luck next time!"
             elif p.bust is not True:
@@ -597,9 +607,6 @@ card2_y = (display_height * 0.15)
 
 # create list for used cards and counters for cards dealt to player/dealer
 used_cards = []
-
-# bet values list
-bets = [25, 50, 100, 500, 750, 1000]
 
 # keep track of number of players (total players adds dealer)
 num_players = 1
