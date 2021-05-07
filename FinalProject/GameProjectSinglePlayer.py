@@ -620,8 +620,25 @@ used_cards = []
 num_players = 1
 total_players = num_players + 1
 counter = 0
-BLACKJACK_CHEAT = True
+BLACKJACK_CHEAT = False
+DEALER_HINTS = False
 
+file1 = open("Cheats.txt", "r+")
+Cheats = file1.readlines()
+if len(Cheats) > 0:
+    BLACKJACK_CHEAT = Cheats[1]
+    if BLACKJACK_CHEAT == "True \n":
+        BLACKJACK_CHEAT = True
+    elif BLACKJACK_CHEAT == "False \n":
+        BLACKJACK_CHEAT = False
+    DEALER_HINTS = Cheats[3]
+    if DEALER_HINTS == "True \n":
+        DEALER_HINTS = True
+    elif DEALER_HINTS == "False \n":
+        DEALER_HINTS = False
+
+print(BLACKJACK_CHEAT)
+print(DEALER_HINTS)
 # initialize objects
 objs = [
     obj.Button(display_width * 0.9, display_height * 0.82, 'deal'),

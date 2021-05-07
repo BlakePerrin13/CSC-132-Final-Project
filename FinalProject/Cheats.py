@@ -48,8 +48,12 @@ def setup():
     pyg.draw.rect(cheatsScreen, DEALER_HINTS_OFF, (588, 261, 60, 50), 2)
     pyg.draw.rect(cheatsScreen, PLACEHOLDER_ON, (488, 361, 60, 50), 2)
     pyg.draw.rect(cheatsScreen, PLACEHOLDER_OFF, (588, 361, 60, 50), 2)
-    
+
 def main():
+    global file1
+    global BLACKJACK_CHEAT
+    global DEALER_HINTS 
+    global PLACEHOLDER 
     global imported
     global INSANE_BLACKJACK_ON 
     global INSANE_BLACKJACK_OFF
@@ -217,6 +221,9 @@ def main():
                     PLACEHOLDER_OFF = white
 
                 if (100) <= mouse[0] <= (100 + 50) and (75) <= mouse[1] <= (75 + 25):
+                    L = ["BLACKJACK_CHEAT = \n", "{} \n".format(BLACKJACK_CHEAT), "DEALER_HINTS = \n", "{} \n".format(DEALER_HINTS)]
+                    file1.writelines(L)
+                    file1.close()
                     if imported == True:
                         importlib.reload(StartScreen)
                     elif imported == False:
@@ -274,6 +281,8 @@ clock = pyg.time.Clock()
 END = False
 selection = 0
 imported = False
+
+file1 = open("Cheats.txt", "w")
 
 main()
 pyg.quit()
