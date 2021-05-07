@@ -15,20 +15,20 @@ if GPIO:
     GPIO.setup(CONFIRM, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
 
 def display_text(text, x, y):
-    startScreen.blit(font.render(text, True, white), (x, y))
+    multiplayerScreen.blit(font.render(text, True, white), (x, y))
 
 def setup():
     # fills background with green (can potentially be changed to image file later)
-    startScreen.fill(green)
+    multiplayerScreen.fill(green)
     # iterates through lists and draws appropriate objects
     
-    display_text('Welcome to Py-Jack', 280, 75)
-    display_text('SinglePlayer', 325, 175)
-    display_text('Multiplayer', 335, 275)
-    display_text('Cheats', 360, 375)
-    pyg.draw.rect(startScreen, CHEATS_Color, (342, 363, 125, 50), 2)
-    pyg.draw.rect(startScreen, MP_Color, (320, 263, 167, 50), 2)
-    pyg.draw.rect(startScreen, SP_Color, (310, 162, 185, 50), 2)
+    multiplayerScreen.blit(font.render('Multiplayer', True, white), (330, 75))
+    multiplayerScreen.blit(font.render('Back', True, Back_Color), (100, 75))
+    multiplayerScreen.blit(font.render('Start a Server', True, SS_Color), (315, 190))
+    multiplayerScreen.blit(font.render('Join a Server', True, JS_Color), (320, 300))
+    pyg.draw.rect(multiplayerScreen, JS_Rect_Color, (310, 285, 180, 50), 2)
+    pyg.draw.rect(multiplayerScreen, SS_Rect_Color, (307, 177, 185, 50), 2)
+    pyg.draw.rect(multiplayerScreen, Back_Rect_Color, (90, 67, 80, 40), 2)
     
 
 def main():
@@ -37,24 +37,23 @@ def main():
     global mode
     global white
     global blue
-    global SP_Color
-    global MP_Color
-    global CHEATS_Color
+    global JS_Color
+    global SS_Color
     global END
     while not END:
         if GPIO:
             if GPIO.input(CONFIRM) == GPIO.HIGH:
                 sleep(0.250)
                 if mode == 1:
-                    import GameProjectSinglePlayer
-                elif mode == 2:
-                    import GameProjectOrganized
-                elif mode == 3:
                     if imported == True:
-                        importlib.reload(Cheats)
+                        importlib.reload(StartScreen)
                     elif imported == False:
                         imported = True
-                        import Cheats
+                        import StartScreen
+                elif mode == 2:
+                    import server
+                elif mode == 3:
+                    import client
                     
             if GPIO.input(UP_ARROW) == GPIO.HIGH:
                 sleep(0.250)
@@ -68,19 +67,19 @@ def main():
                     mode = 1
         if GPIO:
             if mode == 3:
-                SP_Color = white
-                MP_Color = white
-                CHEATS_Color = blue
+                Back_Rect_Color = white
+                SS_Rect_Color = white
+                JS_Rect_Color = blue
             
             elif mode == 2:
-                SP_Color = white
-                MP_Color = blue
-                CHEATS_Color = white
+                Back_Rect_Color = white
+                SS_Rect_Color = blue
+                JS_Rect_Color = white
             
             elif mode == 1:
-                SP_Color = blue
-                MP_Color = white
-                CHEATS_Color = white
+                SS_Rect_Color = white
+                JS_Rect_Color = white
+                Back_Rect_Color = Blue
                 
         pyg.display.update()
 
@@ -93,18 +92,18 @@ def main():
 
             # detect if mouse button is pressed on buttons (and call appropriate functions)
             if event.type == pyg.MOUSEBUTTONDOWN:
-                if (325) <= mouse[0] <= (325 + 100) and (175) <= mouse[1] <= (175 + 25):
-                    import GameProjectSinglePlayer
+                if (315) <= mouse[0] <= (315 + 200) and (190) <= mouse[1] <= (190 + 25):
+                    import server
 
-                if (335) <= mouse[0] <= (335 + 100) and (275) <= mouse[1] <= (275 + 25):
-                    import Multiplayer
+                if (320) <= mouse[0] <= (320 + 200) and (300) <= mouse[1] <= (300 + 25):
+                    import client
 
-                if (360) <= mouse[0] <= (360 + 100) and (375) <= mouse[1] <= (375 + 25):
+                if (100) <= mouse[0] <= (100 + 75) and (75) <= mouse[1] <= (75 + 25):
                     if imported == True:
-                        importlib.reload(Cheats)
+                        importlib.reload(StartScreen)
                     elif imported == False:
                         imported = True
-                        import Cheats
+                        import StartScreen
                     
  
 
@@ -122,7 +121,7 @@ pyg.init()
 WIDTH = 800
 HEIGHT = 450
 
-startScreen = pyg.display.set_mode((WIDTH, HEIGHT))
+multiplayerScreen = pyg.display.set_mode((WIDTH, HEIGHT))
 pyg.display.set_caption("Py-Jack")
 
 # set color values
@@ -130,9 +129,16 @@ green = (34, 99, 43)
 white = (255, 255, 255)
 black = (0, 0, 0)
 blue = (0, 0, 255)
-SP_Color = white
-MP_Color = white
-CHEATS_Color = white
+
+# Set Text Color Values
+SS_Color = white
+JS_Color = white
+Back_Color = white
+
+# Set Rect Color Values
+SS_Rect_Color = white
+JS_Rect_Color = white
+Back_Rect_Color = white
 
 # set font for pygame
 font = pyg.font.Font('freesansbold.ttf', 25)
