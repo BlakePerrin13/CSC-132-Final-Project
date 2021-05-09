@@ -83,7 +83,10 @@ def deal_card(player):
         player.cards.append(obj.Card((player.cards[len(player.cards) - 1].x + 40), (player.cards[len(player.cards) - 1].y - 20), "purple_back", 0, 52))
     elif len(player.cards) == 2 and player.name == "dealer" and player.cards[1].name == "purple_back":
         player.cards.remove(player.cards[1])
-        player.cards.append(obj.Card((player.cards[len(player.cards) - 1].x + 40), (player.cards[len(player.cards) - 1].y - 20), imgs.card_names[rand_index], card_value(imgs.card_names[rand_index], player), rand_index))
+        if DEALER_HINTS == True:
+            player.cards.append(obj.Card((player.cards[len(player.cards) - 1].x + 40), (player.cards[len(player.cards) - 1].y - 20), imgs.card_names[DEALER_HINTS_CARD], card_value(imgs.card_names[DEALER_HINTS_CARD], player), DEALER_HINTS_CARD))
+        else:
+            player.cards.append(obj.Card((player.cards[len(player.cards) - 1].x + 40), (player.cards[len(player.cards) - 1].y - 20), imgs.card_names[rand_index], card_value(imgs.card_names[rand_index], player), rand_index))
     # if not first card, just add it on top of last placed card
     else:
         player.cards.append(obj.Card((player.cards[len(player.cards) - 1].x + 40), (player.cards[len(player.cards) - 1].y - 20), imgs.card_names[rand_index], card_value(imgs.card_names[rand_index], player), rand_index))
@@ -202,7 +205,7 @@ def reset():
         p.cards = []
         p.aces = 0
         p.score = 0
-        p.bet = 0
+        p.bet = 25
         p.stand = 0
         p.bust = False
         p.splitCards = []
@@ -349,6 +352,8 @@ def initialization(players):
             setup(players)
             pyg.display.update()
     deal_card(players[0])
+    if DEALER_HINTS == True:
+        MESSAGE = "Dealer's Next Card: {}".format(imgs.card_names[DEALER_HINTS_CARD])
 
 
 def bust_check(player):
@@ -607,11 +612,11 @@ card_offset = 40
 
 # set x and y for first card dealt to player
 card1_x = (display_width * 0.38)
-card1_y = (display_height * 0.61)
+card1_y = (display_height * 0.63)
 
 # set x and y for first card dealt to dealer
 card2_x = (display_width * 0.38)
-card2_y = (display_height * 0.15)
+card2_y = (display_height * 0.13)
 
 # create list for used cards and counters for cards dealt to player/dealer
 used_cards = []
@@ -620,8 +625,10 @@ used_cards = []
 num_players = 1
 total_players = num_players + 1
 counter = 0
+BLANK_CARD = False
 BLACKJACK_CHEAT = False
 DEALER_HINTS = False
+DEALER_HINTS_CARD = random_card()
 
 file1 = open("Cheats.txt", "r+")
 Cheats = file1.readlines()
