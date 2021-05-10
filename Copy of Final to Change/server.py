@@ -5,7 +5,7 @@ import ObjClasses as obj
 from GameProjectOrganized import Game
 
 
-server = "172.24.1.193"
+server = "192.168.1.145"
 port = 5555
 
 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -56,8 +56,9 @@ def threaded_client(conn, p, gameID):
                         for i in range(len(players)):
                             Game.reset(players[i])
                             Game.initialization(players[i])
-                    elif data == "initial":
+                    elif data == "add":
                         obj.players.append(obj.Player(("player" + str(p)), [], 0, 0, 1000, 0))
+                    elif data == "initial":
                         Game.initialization(players[p])
                         reply = players
                     elif data == "hit":

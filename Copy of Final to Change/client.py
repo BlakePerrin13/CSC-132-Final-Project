@@ -80,11 +80,11 @@ def setup(self, dealer, p, players):
             if self.split is False:
                 gameDisplay.blit(font.render('Your Total: {}'.format(self.score), True, white), (20, 60))
         else:
-            if j == 2:
-                gameDisplay.blit(font.render('Host Total: {}'.format(j, players[j].score), True, white), (20, 60 - (count * 10)))
+            if p == 1:
+                gameDisplay.blit(font.render('Host Total: {}'.format(players[j].score), True, white), (20, 60 + (count * 30)))
                 count += 1
             else:
-                gameDisplay.blit(font.render('Player{} Total: {}'.format(j, players[j].score), True, white), (20, 60 - (count * 10)))
+                gameDisplay.blit(font.render('Player{} Total: {}'.format(j, players[j].score), True, white), (20, 60 + (count * 30)))
                 count += 1
     print_text(MESSAGE)
 
@@ -372,12 +372,32 @@ def menu_screen():
     run = True
     clock = pyg.time.Clock()
     global n
+    try:
+        n.send("add")
+    except:
+        MESSAGE = "Oops, it looks like an error has occured."
+        print_text(MESSAGE)
+        # update display
+        pyg.display.update()
+        sleep(5)
+        menu_screen()
     p = int(n.getP())
     if p == 1:
         while run:
             # fills background with green (can potentially be changed to image file later)
             gameDisplay.fill(green)
             clock.tick(60)
+            reply = pickle.loads(n.send("players"))
+            count = 0
+            print(len(reply))
+            for i in range(len(reply) - 1):
+                j = i + 1
+                if j == p:
+                    print("j = p")
+                else:
+                    print("print Plyaer")
+                    gameDisplay.blit(font.render('Player{} has connected'.format(j), True, white), (20, 60 - (count * 10)))
+                    count += 1
 
             for event in pyg.event.get():
                 if event.type == pyg.QUIT:
