@@ -27,7 +27,9 @@ class Button(Object):
 # class to store player data, will be useful for if we add more players, also cleans up code
 # cards refers to a list of cards (the hand)
 class Player:
-    def __init__(self, name, cards, aces, score, chips, bet, stand = False, bust=False, splitCards = [], splitAces = 0, splitScore = 0, splitBet = 0,  splitStand = False, splitBust = False, split = False, win = False):
+    def __init__(self, name, cards, aces, score, chips, bet, stand=False, bust=False, splitCards=[], splitAces=0,
+                 splitScore=0, splitBet=0,  splitStand=False, splitBust=False, split=False, win=False,
+                 bets_placed=False, bet_value=0):
         self.name = name
         self.cards = cards
         self.aces = aces
@@ -44,3 +46,5 @@ class Player:
         self.splitBust = splitBust
         self.split = split
         self.win = win
+        self.bets_placed = bets_placed
+        self.bet_value = bet_value
