@@ -6,9 +6,9 @@ GPIO = False
 
 if GPIO:
     import RPi.GPIO as GPIO
-    UP_ARROW = 18
-    DOWN_ARROW = 19
-    CONFIRM = 20
+    UP_ARROW = 19
+    DOWN_ARROW = 18
+    CONFIRM = 4
     GPIO.setmode(GPIO.BCM)
     GPIO.setup(UP_ARROW, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
     GPIO.setup(DOWN_ARROW, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)

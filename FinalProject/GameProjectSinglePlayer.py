@@ -14,6 +14,7 @@ if GPIO:
     RESET = 6
     HIT = 17
     STAND = 16
+    SPLIT = 13
     UP_ARROW = 19
     DOWN_ARROW = 18
     CONFIRM = 4
@@ -22,6 +23,7 @@ if GPIO:
     GPIO.setup(RESET, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
     GPIO.setup(HIT, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
     GPIO.setup(STAND, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
+    GPIO.setup(SPLIT, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
     GPIO.setup(UP_ARROW, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
     GPIO.setup(DOWN_ARROW, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
     GPIO.setup(CONFIRM, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
@@ -198,8 +200,10 @@ def setup(players):
 
 # define reset function
 def reset():
+    global DEALER_HINTS_CARD
     global used_cards
     global players
+    DEALER_HINTS_CARD = random_card()
     used_cards = []
     for p in players:
         p.cards = []
@@ -296,8 +300,11 @@ def main(players):
             if GPIO.input(HIT) == GPIO.HIGH:
                 hit(players[1])
                 sleep(0.5)
-            elif GPIO.input(STAND) == GPIO.HIGH:
+            if GPIO.input(STAND) == GPIO.HIGH:
                 stand(players[1])
+            if GPIO.input(SPLIT) == GPIO.HIGH:
+                split(players[1])
+            
 
         # get mouse x and y coordinates
         mouse = pyg.mouse.get_pos()
@@ -516,6 +523,8 @@ def bet(player):
         mouse = pyg.mouse.get_pos()
         MESSAGE = "Use buttons to place your bets."
 
+        bets = [25, 50, 100, 500, 750, 1000, player.chips]
+
         if GPIO:
             if GPIO.input(UP_ARROW) == GPIO.HIGH:
                 sleep(0.250)
@@ -562,10 +571,10 @@ def split(player):
         counter = 1
         player.chips -= player.bet
         player.splitBet += player.bet 
-        card1_x = (display_width * 0.25)
-        card1_y = (display_height * 0.56)
-        card2_x = (display_width * 0.60)
-        card2_y = (display_height * 0.56)
+        card1_x = (display_width * 0.30)
+        card1_y = (display_height * 0.62)
+        card2_x = (display_width * 0.55)
+        card2_y = (display_height * 0.62)
         player.cards[0].x = card1_x
         player.cards[0].y = card1_y
         player.cards[1].x = card2_x
