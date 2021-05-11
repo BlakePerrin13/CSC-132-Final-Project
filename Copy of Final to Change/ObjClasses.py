@@ -5,6 +5,7 @@ class Object:
         self.x = x
         self.y = y
 
+
 # order specifies when card is played
 # name is the name of the card i.e. AS (Ace of Spades)
 # val specifies value of card i.e. King is 10
@@ -16,6 +17,7 @@ class Card(Object):
         self.val = val
         self.ind = ind
 
+
 # basic class for buttons, pressed parameter might be useless right now idk
 class Button(Object):
     def __init__(self, x, y, name, pressed=False):
@@ -25,6 +27,8 @@ class Button(Object):
 
 
 players = []
+
+
 # class to store player data, will be useful for if we add more players, also cleans up code
 # cards refers to a list of cards (the hand)
 class Player:
