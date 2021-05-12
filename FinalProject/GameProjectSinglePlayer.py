@@ -559,6 +559,7 @@ def bet(player):
         clock.tick(30)
 
     MESSAGE = ""
+    pyg.display.update()
 
 
 def split(player):

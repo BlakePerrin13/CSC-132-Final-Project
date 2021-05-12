@@ -5,7 +5,7 @@ import ObjClasses as obj
 from GameProjectOrganized import Game
 
 
-server = "172.24.1.193"
+server = "138.47.137.225"
 port = 5555
 
 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
