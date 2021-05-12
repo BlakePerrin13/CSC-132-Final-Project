@@ -5,7 +5,8 @@ import ObjClasses as obj
 from GameProjectOrganized import Game
 
 
-server = "192.168.1.145"
+server = "138.47.137.225"
+#server = "192.168.1.145"
 port = 5555
 
 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -15,7 +16,7 @@ try:
 except socket.error as e:
     str(e)
 
-s.listen()
+s.listen(2)
 print("Waiting for a connection, Server Started")
 
 connected = set()
@@ -52,6 +53,8 @@ def threaded_client(conn, p, gameID):
                         reply = players
                     elif data == "cards":
                         reply = players[p].cards
+                    elif data == "dcards":
+                        reply = players[0].cards
                     elif data == "reset":
                         for i in range(len(players)):
                             Game.reset(players[i])

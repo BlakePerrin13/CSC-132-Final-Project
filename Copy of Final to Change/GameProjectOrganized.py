@@ -8,6 +8,9 @@ import imgs
 from time import sleep
 
 
+
+
+
 class Game():
     def __init__(self, id):
         self.id = id

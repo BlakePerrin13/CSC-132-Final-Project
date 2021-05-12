@@ -1,0 +1,4 @@
+BLACKJACK_CHEAT = 
+False 
+DEALER_HINTS = 
+False 

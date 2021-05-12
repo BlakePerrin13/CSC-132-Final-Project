@@ -4,6 +4,7 @@ import pickle
 import ObjClasses as obj
 import imgs
 from time import sleep
+import importlib
 
 
 GPIO = False
@@ -80,7 +81,7 @@ def setup(self, dealer, p, players):
             if self.split is False:
                 gameDisplay.blit(font.render('Your Total: {}'.format(self.score), True, white), (20, 60))
         else:
-            if p == 1:
+            if j == 1:
                 gameDisplay.blit(font.render('Host Total: {}'.format(players[j].score), True, white), (20, 60 + (count * 30)))
                 count += 1
             else:
@@ -156,6 +157,7 @@ def set_bet_check(mouse, player):
 
 def bet(player, p):
     global MESSAGE
+    print("In bet")
     player.bet_value = 0
     player.bets_placed = False
     while not player.bets_placed:
@@ -221,12 +223,19 @@ def waiting(info):
             if reply == "done":
                 MESSAGE = ""
                 run = False
+            else:
+                # MESSAGE = "Waiting for all players to finish..."
+                print_text(MESSAGE)
+                pyg.display.update()
         except:
             break
     
     
     
-    
+
+
+
+
 
 def main():
     # initiates clock and end parameter
@@ -239,7 +248,6 @@ def main():
     except:
         MESSAGE = "Oops, it looks like an error has occured."
         setup(obj.players[p], obj.players[0], p, obj.players)
-        menu_screen()
     for i in range(len(reply)):
         obj.players.append(reply[i])
     p = int(n.getP())
@@ -248,7 +256,6 @@ def main():
     except:
         MESSAGE = "Oops, it looks like an error has occured."
         setup(obj.players[p], obj.players[0], p, obj.players)
-        menu_screen()
     #print("Score out of update: " + str(obj.players[p].score))
     setup(obj.players[p], obj.players[0], p, obj.players)
     # update display
@@ -256,6 +263,8 @@ def main():
 
     game_run = True
     while game_run:
+        update(p)
+        setup(obj.players[p], obj.players[0], p, obj.players)
         bet(obj.players[p], p)
         n.send(str(obj.players[p].chips))
         #initialization(player, p)
@@ -264,8 +273,8 @@ def main():
         except:
             MESSAGE = "Oops, it looks like an error has occured."
             setup(obj.players[p], obj.players[0], p, obj.players)
+            pyg.display.update()
             sleep(5)
-            menu_screen()
         setup(obj.players[p], obj.players[0], p, obj.players)
         pyg.display.update()
         run = True
@@ -276,7 +285,6 @@ def main():
                 game = n.send("get")
             except:
                 print("Couldn't get game")
-                menu_screen()
             
 
     ##        if game.allStand():
@@ -308,13 +316,15 @@ def main():
                                 MESSAGE = "Oops, it looks like an error has occured."
                                 setup(obj.players[p], obj.players[0], p)
                                 sleep(5)
-                                menu_screen()
                             setup(obj.players[p], obj.players[0], p, obj.players)
                             pyg.display.update()
+                            sleep(1)
                             run = False
                         else:
                             MESSAGE = "Only the Host can begin a new round."
                             print_text(MESSAGE)
+                            pyg.display.update()
+                            sleep(1)
                     # hit button, generates new card and adds to card objects list
                     elif hit_button_check(mouse) == 1 and obj.players[p].stand is False:
                         n.send("hit")
@@ -323,17 +333,22 @@ def main():
                         except:
                             MESSAGE = "Oops, it looks like an error has occured."
                             setup(obj.players[p], obj.players[0], p, obj.players)
-                            menu_screen()
+                            pyg.display.update()
+                            sleep(1)
                         setup(obj.players[p], obj.players[0], p, obj.players)
                         pyg.display.update()
                         if obj.players[p].bust is True:
                             MESSAGE = "You Busted! Waiting for other players..."
                             setup(obj.players[p], obj.players[0], p, obj.players)
+                            pyg.display.update()
+                            sleep(1)
                             waiting("bust")
                     # stand button
                     elif stand_button_check(mouse) == 1 and obj.players[p].stand is False:
                         MESSAGE = "Waiting for other players to finish..."
                         setup(obj.players[p], obj.players[0], p, obj.players)
+                        pyg.display.update()
+                        sleep(1)
                         waiting("stand")
                     # split button
                     elif split_button_check(mouse) == 1 and obj.players[p].stand is False:
@@ -344,12 +359,13 @@ def main():
                             MESSAGE = "Oops, it looks like an error has occured."
                             setup(obj.players[p], obj.players[0], p, obj.players)
                             sleep(5)
-                            menu_screen()
 
             # call our setup function
             #n.send("player")
             try:
                 update(p)
+                if obj.players[p].bet == 0:
+                    run = False
             except:
                 MESSAGE = "Oops, it looks like an error has occured."
                 setup(obj.players[p], obj.players[0], p, obj.players)
@@ -358,11 +374,11 @@ def main():
             #print("Score out of update: " + str(obj.players[p].score))
             setup(obj.players[p], obj.players[0], p, obj.players)
 
+            # print information to screen
+            print_text(MESSAGE)
+
             # update display
             pyg.display.update()
-##            end_time = time()
-##            total = end_time - start_time
-##            print(total)
             
 
 
@@ -372,6 +388,7 @@ def menu_screen():
     run = True
     clock = pyg.time.Clock()
     global n
+    global imported
     try:
         n.send("add")
     except:
@@ -389,11 +406,12 @@ def menu_screen():
             clock.tick(60)
             reply = pickle.loads(n.send("players"))
             count = 0
-            print(len(reply))
+            #print(len(reply))
             for i in range(len(reply) - 1):
                 j = i + 1
                 if j == p:
-                    print("j = p")
+                    pass
+                    #print("j = p")
                 else:
                     print("print Plyaer")
                     gameDisplay.blit(font.render('Player{} has connected'.format(j), True, white), (20, 60 - (count * 10)))
@@ -466,6 +484,7 @@ font = pyg.font.Font('freesansbold.ttf', 25)
 # initiates clock and end parameter
 clock = pyg.time.Clock()
 END = False
+imported = False
 
 # how much the cards should be offset in x and y directions when new card is dealt
 card_offset = 40
