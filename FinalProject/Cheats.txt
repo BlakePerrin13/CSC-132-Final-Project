@@ -1,4 +1,0 @@
-BLACKJACK_CHEAT = 
-True 
-DEALER_HINTS = 
-True 
